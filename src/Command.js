@@ -31,7 +31,10 @@ class Command {
         let arr = this.argString.split(",");
         if (arr.length <= 1) {
             arr = this.argString.split("，");
-            if (arr.length <= 1) throw "格式不正确\n" + this.helper;
+            if (arr.length <= 1) {
+                arr = this.argString.split("‚");
+                if (arr.length <= 1) throw "格式不正确\n" + this.helper;
+            }
         }
         this.user = arr[0].trim();
         this.type = arr[1].trim().toLocaleLowerCase();

@@ -122,7 +122,7 @@ class getBestScoresData {
             label: {
                 titleY: type,
                 divideX: 1,
-                divideY: 10
+                divideY: 20
             },
             // font: "15px 宋体",
             xDateMode: true,
