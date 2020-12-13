@@ -3,6 +3,7 @@
 const ScoreObject = require("./score/ScoreObject");
 const OsuApi = require("./ApiRequest");
 const fs = require('fs');
+const Chart = require('lchart');
 
 class getBestScoresData {
     constructor(host, apiKey, user, saveDir) {
@@ -68,6 +69,66 @@ class getBestScoresData {
         output += "\nHP区间：" + minHP.toFixed(1) + "~" + maxHP.toFixed(1) + "，平均值：" + (totalHP / length).toFixed(1);
         output += "\n难度区间：" + minStars.toFixed(2) + "★~" + maxStars.toFixed(2) + "★，平均值：" + (totalStars / length).toFixed(2) + "★";
         return output;
+    }
+
+    async drawChart(exScoreObjects, type) {
+        const statTypes = ["cs", "ar", "od", "hp", "stars"];
+        const ppTypes = ["aim", "speed", "acc", "total"];
+        const length = exScoreObjects.length;
+        let data = [];
+        if (statTypes.indexOf(type) >= 0) {
+            for (let i = 0; i < length; i++) {
+                data.push(exScoreObjects[i][type]);
+            }
+        }
+        else if (ppTypes.indexOf(type) >= 0) {
+            for (let i = 0; i < length; i++) {
+                data.push(exScoreObjects[i].pp[type]);
+            }
+        }
+        else return "限定数据：" + statTypes.join("、") + "；" + ppTypes.join("、");
+        // 排序
+        data = data.sort((a, b) => b - a);
+        let points = data.map((d, index) => {
+            return { x: index + 1, y: d };
+        });
+        let xLabel = new Array(length);
+		for (let i = 0; i < length; ++i) {
+			xLabel[i] = i+1;
+		}
+        const chart = new Chart(points, {
+            padding: {
+                up: 100,
+                down: 80,
+                left: 100,
+                right: 100
+            },
+            color: {
+                background: "white",
+                title: "#000000",
+                titleX: "#005cc5",
+                titleY: "#7d04c8",
+                coordinate: "#000000",
+                line: "#ff9898",
+                pointFill: "#ff5757",
+                grid: "#999999"
+            },
+            size: {
+                width: 1024,
+                height: 768
+            },
+            label: {
+                titleY: type,
+                divideX: 1,
+                divideY: 20
+            },
+            font: "15px 宋体",
+            xDateMode: true,
+            xDateLabel: xLabel,
+        });
+        const picUrl = chart.draw();
+        const base64 = picUrl.substring(picUrl.indexOf(",") + 1);
+        return `[CQ:image,file=base64://${base64}]`;
     }
 
     // pp分配
@@ -293,6 +354,7 @@ class getBestScoresData {
             }));
             console.log("数据汇总处理");
             let output = this.user + "的数据整理好了！";
+            const enTypes = ["map", "per", "aim", "spd", "acc", "pp", "all", "chart-cs", "chart-ar", "chart-od", "chart-hp", "chart-stars", "chart-aim", "chart-speed", "chart-acc", "chart-total"];
             switch (type) {
                 case "map": {
                     output += await this.statSummery(exScoreObjects);
@@ -327,8 +389,44 @@ class getBestScoresData {
                     output += await this.totalPP(exScoreObjects);
                     break;
                 }
+                case "chart-cs": {
+                    output += await this.drawChart(exScoreObjects, "cs");
+                    break;
+                }
+                case "chart-ar": {
+                    output += await this.drawChart(exScoreObjects, "ar");
+                    break;
+                }
+                case "chart-od": {
+                    output += await this.drawChart(exScoreObjects, "od");
+                    break;
+                }
+                case "chart-hp": {
+                    output += await this.drawChart(exScoreObjects, "hp");
+                    break;
+                }
+                case "chart-stars": {
+                    output += await this.drawChart(exScoreObjects, "stars");
+                    break;
+                }
+                case "chart-aim": {
+                    output += await this.drawChart(exScoreObjects, "aim");
+                    break;
+                }
+                case "chart-speed": {
+                    output += await this.drawChart(exScoreObjects, "speed");
+                    break;
+                }
+                case "chart-acc": {
+                    output += await this.drawChart(exScoreObjects, "acc");
+                    break;
+                }
+                case "chart-total": {
+                    output += await this.drawChart(exScoreObjects, "total");
+                    break;
+                }
                 default: {
-                    return "我不知道你要查什么，关键词有map、per、aim、spd、acc、pp";
+                    return "我不知道你要查什么，关键词有"+enTypes.join("、");
                 }
             }
             return output;
