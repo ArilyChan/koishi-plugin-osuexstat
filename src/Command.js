@@ -37,14 +37,18 @@ class Command {
         this.type = arr[1].trim().toLocaleLowerCase();
     }
 
-    async apply(host, apiKey, saveDir, bd) {
+    async apply(stat, host, apiKey, saveDir, bd) {
         try {
             if (!this.cutCommand()) return "";
             if (this.commandString !== "exbp") return "";
             this.getArgObject();
             if (this.typeList.indexOf(this.type) < 0) throw "格式不正确\n" + this.helper;
+            if (stat.isbusy) return "请再等等QAQ";
             let bpData = new getBestScoresData(host, apiKey, this.user, saveDir);
-            return bpData.output(bd, this.type);
+            stat.isbusy = true;
+            let output = await bpData.output(bd, this.type);
+            stat.isbusy = false;
+            return output;
         }
         catch (ex) {
             return ex;

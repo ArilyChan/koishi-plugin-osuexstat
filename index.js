@@ -22,12 +22,12 @@ class osuexstat {
      * @param {Number} qqId
      * @param {String} message 输入的消息
      */
-    async apply(qqId, message) {
+    async apply(qqId, message, stat) {
         try {
             if (!message.length || message.length < 2) return "";
             if (this.prefixs.indexOf(message.substring(0, 1)) < 0) return "";
             let commandObject = new Command(message.substring(1).trim());
-            let reply = await commandObject.apply(this.host, this.apiKey, this.mapFolder,this.bd);
+            let reply = await commandObject.apply(stat, this.host, this.apiKey, this.mapFolder,this.bd);
             return reply;
         } catch (ex) {
             console.log(ex);
@@ -41,11 +41,12 @@ module.exports.osuexstat = osuexstat;
 module.exports.name = 'koishi-plugin-osuexstat';
 module.exports.apply = (ctx, options) => {
     const exs = new osuexstat(options);
+    let stat = {isbusy: false};
     ctx.middleware(async (meta, next) => {
         try {
             const message = meta.message;
             const userId = meta.userId;
-            let reply = await exs.apply(userId, message);
+            let reply = await exs.apply(userId, message, stat);
             if (reply) {
                 await meta.$send(`[CQ:at,qq=${userId}]` + '\n' + reply);
             } else return next();

@@ -87,6 +87,8 @@ class getBestScoresData {
             }
         }
         else return "限定数据：" + statTypes.join("、") + "；" + ppTypes.join("、");
+        // stars保留2位
+        data = data.map((num)=>Math.round(num * 100) / 100);
         // 排序
         data = data.sort((a, b) => b - a);
         let points = data.map((d, index) => {
@@ -120,9 +122,9 @@ class getBestScoresData {
             label: {
                 titleY: type,
                 divideX: 1,
-                divideY: 20
+                divideY: 10
             },
-            font: "15px 宋体",
+            // font: "15px 宋体",
             xDateMode: true,
             xDateLabel: xLabel,
         });
@@ -353,7 +355,7 @@ class getBestScoresData {
                 return await item.extendScore();
             }));
             console.log("数据汇总处理");
-            let output = this.user + "的数据整理好了！";
+            let output = this.user + "的\n";
             const enTypes = ["map", "per", "aim", "spd", "acc", "pp", "all", "chart-cs", "chart-ar", "chart-od", "chart-hp", "chart-stars", "chart-aim", "chart-speed", "chart-acc", "chart-total"];
             switch (type) {
                 case "map": {
