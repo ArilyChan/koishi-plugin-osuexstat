@@ -15,7 +15,7 @@ class beatmapDownloader {
                 method: 'GET',
                 headers: { 'Content-Type': 'application/octet-stream' },
                 credentials: 'include',
-                timeout: 20000,
+                timeout: 10000,
             }).then(res => res.text());
             console.log("保存为文件" + bid + ".osu");
             fs.writeFile(filePath, beatmapData, "utf-8", function (err) {

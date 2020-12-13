@@ -122,6 +122,7 @@ class getBestScoresData {
         const length = exScoreObjects.length;
         let maxAim = 0;
         let minAim = 10000;
+        let maxAimBeatmapTitle = "";
         let totalAim = 0;
         let maxAimVSFC = 0;
         let maxAimVSSS = 0;
@@ -133,7 +134,10 @@ class getBestScoresData {
             let aimSS = exScoreObjects[i].sspp.aim;
             let aimVSFC = aimFC - aim;
             let aimVSSS = aimSS - aim;
-            if (aim > maxAim) maxAim = aim;
+            if (aim > maxAim) {
+                maxAim = aim;
+                maxAimBeatmapTitle = exScoreObjects[i].beatmapTitle;
+            }
             if (aim < minAim) minAim = aim;
             totalAim += aim;
             if (aimVSFC > maxAimVSFC) {
@@ -146,6 +150,7 @@ class getBestScoresData {
             }
         }
         let output = "\nAim区间：" + minAim.toFixed(0) + "~" + maxAim.toFixed(0) + "，平均值：" + (totalAim / length).toFixed(0);
+        output += "\nAim最高谱面：" + maxAimBeatmapTitle;
         output += "\n如果FC，Aim可以提升最大：" + maxAimVSFC.toFixed(0) + "，谱面：" + maxFCImpAimBeatmapTitle;
         output += "\n如果SS，Aim可以提升最大：" + maxAimVSSS.toFixed(0) + "，谱面：" + maxSSImpAimBeatmapTitle;
         return output;
@@ -158,6 +163,7 @@ class getBestScoresData {
         const length = exScoreObjects.length;
         let maxSpd = 0;
         let minSpd = 10000;
+        let maxSpdBeatmapTitle = "";
         let totalSpd = 0;
         let maxSpdVSFC = 0;
         let maxSpdVSSS = 0;
@@ -169,7 +175,10 @@ class getBestScoresData {
             let speedSS = exScoreObjects[i].sspp.speed;
             let speedVSFC = speedFC - speed;
             let speedVSSS = speedSS - speed;
-            if (speed > maxSpd) maxSpd = speed;
+            if (speed > maxSpd) {
+                maxSpd = speed;
+                maxSpdBeatmapTitle = exScoreObjects[i].beatmapTitle;
+            }
             if (speed < minSpd) minSpd = speed;
             totalSpd += speed;
             if (speedVSFC > maxSpdVSFC) {
@@ -182,6 +191,7 @@ class getBestScoresData {
             }
         }
         let output = "\nSpeed区间：" + minSpd.toFixed(0) + "~" + maxSpd.toFixed(0) + "，平均值：" + (totalSpd / length).toFixed(0);
+        output += "\nSpeed最高谱面：" + maxSpdBeatmapTitle;
         output += "\n如果FC，Speed可以提升最大：" + maxSpdVSFC.toFixed(0) + "，谱面：" + maxFCImpSpdBeatmapTitle;
         output += "\n如果SS，Speed可以提升最大：" + maxSpdVSSS.toFixed(0) + "，谱面：" + maxSSImpSpdBeatmapTitle;
         return output;
@@ -194,6 +204,7 @@ class getBestScoresData {
         const length = exScoreObjects.length;
         let maxAcc = 0;
         let minAcc = 10000;
+        let maxAccBeatmapTitle = "";
         let totalAcc = 0;
         let maxAccVSFC = 0;
         let maxAccVSSS = 0;
@@ -205,7 +216,10 @@ class getBestScoresData {
             let accSS = exScoreObjects[i].sspp.acc;
             let accVSFC = accFC - acc;
             let accVSSS = accSS - acc;
-            if (acc > maxAcc) maxAcc = acc;
+            if (acc > maxAcc) {
+                maxAcc = acc;
+                maxAccBeatmapTitle = exScoreObjects[i].beatmapTitle;
+            }
             if (acc < minAcc) minAcc = acc;
             totalAcc += acc;
             if (accVSFC > maxAccVSFC) {
@@ -218,6 +232,7 @@ class getBestScoresData {
             }
         }
         let output = "\nAcc区间：" + minAcc.toFixed(0) + "~" + maxAcc.toFixed(0) + "，平均值：" + (totalAcc / length).toFixed(0);
+        output += "\nAcc最高谱面：" + maxAccBeatmapTitle;
         output += "\n如果FC，Acc可以提升最大：" + maxAccVSFC.toFixed(0) + "，谱面：" + maxFCImpAccBeatmapTitle;
         output += "\n如果SS，Acc可以提升最大：" + maxAccVSSS.toFixed(0) + "，谱面：" + maxSSImpAccBeatmapTitle;
         return output;
@@ -300,6 +315,15 @@ class getBestScoresData {
                     break;
                 }
                 case "pp": {
+                    output += await this.totalPP(exScoreObjects);
+                    break;
+                }
+                case "all": {
+                    output += await this.statSummery(exScoreObjects);
+                    output += await this.ppAllocation(exScoreObjects);
+                    output += await this.aimPP(exScoreObjects);
+                    output += await this.spdPP(exScoreObjects);
+                    output += await this.accPP(exScoreObjects);
                     output += await this.totalPP(exScoreObjects);
                     break;
                 }
