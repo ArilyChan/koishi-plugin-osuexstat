@@ -341,5 +341,4 @@ ASALocalRun/
 healthchecksdb
 
 # this
-beatmap/
 apiToken.json
