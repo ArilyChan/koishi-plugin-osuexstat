@@ -1,6 +1,6 @@
 {
   "name": "koishi-plugin-osuexstat",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -10,7 +10,7 @@
   "license": "MIT",
   "dependencies": {
     "fs": "0.0.1-security",
-    "lchart": "0.0.2",
+    "lchart": "0.0.3",
     "node-fetch": "^2.6.1",
     "ojsama": "^1.2.5",
     "path": "^0.12.7",
