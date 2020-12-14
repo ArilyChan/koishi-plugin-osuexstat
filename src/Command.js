@@ -3,10 +3,13 @@ const getBestScoresData = require("./getBestScoresData");
 class Command {
     constructor(message) {
         this.message = message;
-        this.helper = "请输入exbp [玩家名] ,[关键词]\n关键词有：map、per、aim、spd、acc、pp";
-        this.typeList = ["map", "per", "aim", "spd", "acc", "pp", "all", "chart-cs", "chart-ar", "chart-od", "chart-hp", "chart-stars", "chart-aim", "chart-speed", "chart-acc", "chart-total"];
+        this.typeList = ["map", "per", "aim", "spd", "acc", "pp", "chart", "info"];
+        this.argList = ["cs", "ar", "od", "hp", "stars", "aim", "speed", "acc", "total"];
+        this.typeNeedArg = [0, 0, 0, 0, 0, 0, 1, 2];
+        this.helper = "请输入exbp [玩家名] ,[关键词] , ...[其他参数]\n关键词有" + this.typeList.join("、");
         this.user = "";
         this.type = "";
+        this.args = [];
     }
 
     /**
@@ -28,16 +31,15 @@ class Command {
      * 分析argString
      */
     getArgObject() {
-        let arr = this.argString.split(",");
-        if (arr.length <= 1) {
-            arr = this.argString.split("，");
-            if (arr.length <= 1) {
-                arr = this.argString.split("‚");
-                if (arr.length <= 1) throw "格式不正确\n" + this.helper;
-            }
-        }
-        this.user = arr[0].trim();
-        this.type = arr[1].trim().toLocaleLowerCase();
+        let arr = this.argString.split(/,|，|‚/);
+        if (arr.length <= 1) throw "格式不正确\n" + this.helper;
+        let args = [];
+        arr.map((s) => {
+            if (s) args.push(s.trim().toLocaleLowerCase());
+        });
+        this.user = args[0];
+        this.type = args[1];
+        this.args = args.slice(2); // 不足则为[]
     }
 
     async apply(stat, host, apiKey, saveDir, bd) {
@@ -45,11 +47,17 @@ class Command {
             if (!this.cutCommand()) return "";
             if (this.commandString !== "exbp") return "";
             this.getArgObject();
-            if (this.typeList.indexOf(this.type) < 0) throw "格式不正确\n" + this.helper;
+            let typeIndex = this.typeList.indexOf(this.type);
+            if (typeIndex < 0) throw "格式不正确\n" + this.helper;
+            if (this.typeNeedArg[typeIndex] > this.args.length) {
+                if (this.type === "chart") throw "格式不正确\n请输入exbp [玩家名] ,chart, [对应数据]\n数据有" + this.argList.join("、");
+                else if (this.type === "info") throw "格式不正确\n请输入exbp [玩家名] ,chart, [对应数据], [序号，1-100]\n数据有" + this.argList.join("、");
+                else throw "奇怪的错误，请联系Exsper";
+            }
             if (stat.isbusy) return "请再等等QAQ";
             let bpData = new getBestScoresData(host, apiKey, this.user, saveDir);
             stat.isbusy = true;
-            let output = await bpData.output(bd, this.type);
+            let output = await bpData.output(bd, this.type, this.args);
             stat.isbusy = false;
             return output;
         }

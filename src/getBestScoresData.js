@@ -71,68 +71,6 @@ class getBestScoresData {
         return output;
     }
 
-    async drawChart(exScoreObjects, type) {
-        const statTypes = ["cs", "ar", "od", "hp", "stars"];
-        const ppTypes = ["aim", "speed", "acc", "total"];
-        const length = exScoreObjects.length;
-        let data = [];
-        if (statTypes.indexOf(type) >= 0) {
-            for (let i = 0; i < length; i++) {
-                data.push(exScoreObjects[i][type]);
-            }
-        }
-        else if (ppTypes.indexOf(type) >= 0) {
-            for (let i = 0; i < length; i++) {
-                data.push(exScoreObjects[i].pp[type]);
-            }
-        }
-        else return "限定数据：" + statTypes.join("、") + "；" + ppTypes.join("、");
-        // stars保留2位
-        data = data.map((num)=>Math.round(num * 100) / 100);
-        // 排序
-        data = data.sort((a, b) => b - a);
-        let points = data.map((d, index) => {
-            return { x: index + 1, y: d };
-        });
-        let xLabel = new Array(length);
-		for (let i = 0; i < length; ++i) {
-			xLabel[i] = i+1;
-		}
-        const chart = new Chart(points, {
-            padding: {
-                up: 100,
-                down: 80,
-                left: 100,
-                right: 100
-            },
-            color: {
-                background: "white",
-                title: "#000000",
-                titleX: "#005cc5",
-                titleY: "#7d04c8",
-                coordinate: "#000000",
-                line: "#ff9898",
-                pointFill: "#ff5757",
-                grid: "#999999"
-            },
-            size: {
-                width: 1024,
-                height: 768
-            },
-            label: {
-                titleY: type,
-                divideX: 1,
-                divideY: 20
-            },
-            // font: "15px 宋体",
-            xDateMode: true,
-            xDateLabel: xLabel,
-        });
-        const picUrl = chart.draw();
-        const base64 = picUrl.substring(picUrl.indexOf(",") + 1);
-        return `[CQ:image,file=base64://${base64}]`;
-    }
-
     // pp分配
     async ppAllocation(exScoreObjects) {
         // 计算每张图pp分配，找出3维各自最大比重的那张图
@@ -337,7 +275,91 @@ class getBestScoresData {
         return output;
     }
 
-    async output(bd, type) {
+    async drawChart(exScoreObjects, type) {
+        const statTypes = ["cs", "ar", "od", "hp", "stars"];
+        const ppTypes = ["aim", "speed", "acc", "total"];
+        const length = exScoreObjects.length;
+        let data = [];
+        if (statTypes.indexOf(type) >= 0) {
+            for (let i = 0; i < length; i++) {
+                data.push(exScoreObjects[i][type]);
+            }
+        }
+        else if (ppTypes.indexOf(type) >= 0) {
+            for (let i = 0; i < length; i++) {
+                data.push(exScoreObjects[i].pp[type]);
+            }
+        }
+        else return "限定数据：" + statTypes.join("、") + "；" + ppTypes.join("、");
+        // stars保留2位
+        data = data.map((num) => Math.round(num * 100) / 100);
+        // 排序
+        data = data.sort((a, b) => b - a);
+        let points = data.map((d, index) => {
+            return { x: index + 1, y: d };
+        });
+        let xLabel = new Array(length);
+        for (let i = 0; i < length; ++i) {
+            xLabel[i] = i + 1;
+        }
+        const chart = new Chart(points, {
+            padding: {
+                up: 100,
+                down: 80,
+                left: 100,
+                right: 100
+            },
+            color: {
+                background: "white",
+                title: "#000000",
+                titleX: "#005cc5",
+                titleY: "#7d04c8",
+                coordinate: "#000000",
+                line: "#ff9898",
+                pointFill: "#ff5757",
+                grid: "#999999"
+            },
+            size: {
+                width: 1024,
+                height: 768
+            },
+            label: {
+                titleY: type,
+                divideX: 1,
+                divideY: 20
+            },
+            // font: "15px 宋体",
+            xDateMode: true,
+            xDateLabel: xLabel,
+        });
+        const picUrl = chart.draw();
+        const base64 = picUrl.substring(picUrl.indexOf(",") + 1);
+        return `[CQ:image,file=base64://${base64}]`;
+    }
+
+    async showInfo(exScoreObjects, type, number) {
+        const statTypes = ["cs", "ar", "od", "hp", "stars"];
+        const ppTypes = ["aim", "speed", "acc", "total"];
+        const length = exScoreObjects.length;
+        let data = [];
+        if (statTypes.indexOf(type) >= 0) {
+            for (let i = 0; i < length; i++) {
+                data.push({val: exScoreObjects[i][type], score: exScoreObjects[i]});
+            }
+        }
+        else if (ppTypes.indexOf(type) >= 0) {
+            for (let i = 0; i < length; i++) {
+                data.push({val: exScoreObjects[i].pp[type], score: exScoreObjects[i]});
+            }
+        }
+        else return "限定数据：" + statTypes.join("、") + "；" + ppTypes.join("、");
+        // 排序
+        data = data.sort((a, b) => b.val - a.val);
+        if (number < 1 || number > length) return "请输入序号：1" + "~" + length;
+        return type + "#" + number + ":\n" + data[number-1].score.toString();
+    }
+
+    async output(bd, type, args) {
         try {
             let scoreObjects = await this.getBestScoresObject();
             // 下载所有缺失谱面
@@ -356,7 +378,6 @@ class getBestScoresData {
             }));
             console.log("数据汇总处理");
             let output = this.user + "的\n";
-            const enTypes = ["map", "per", "aim", "spd", "acc", "pp", "all", "chart-cs", "chart-ar", "chart-od", "chart-hp", "chart-stars", "chart-aim", "chart-speed", "chart-acc", "chart-total"];
             switch (type) {
                 case "map": {
                     output += await this.statSummery(exScoreObjects);
@@ -391,44 +412,16 @@ class getBestScoresData {
                     output += await this.totalPP(exScoreObjects);
                     break;
                 }
-                case "chart-cs": {
-                    output += await this.drawChart(exScoreObjects, "cs");
+                case "chart": {
+                    output += await this.drawChart(exScoreObjects, args[0]);
                     break;
                 }
-                case "chart-ar": {
-                    output += await this.drawChart(exScoreObjects, "ar");
-                    break;
-                }
-                case "chart-od": {
-                    output += await this.drawChart(exScoreObjects, "od");
-                    break;
-                }
-                case "chart-hp": {
-                    output += await this.drawChart(exScoreObjects, "hp");
-                    break;
-                }
-                case "chart-stars": {
-                    output += await this.drawChart(exScoreObjects, "stars");
-                    break;
-                }
-                case "chart-aim": {
-                    output += await this.drawChart(exScoreObjects, "aim");
-                    break;
-                }
-                case "chart-speed": {
-                    output += await this.drawChart(exScoreObjects, "speed");
-                    break;
-                }
-                case "chart-acc": {
-                    output += await this.drawChart(exScoreObjects, "acc");
-                    break;
-                }
-                case "chart-total": {
-                    output += await this.drawChart(exScoreObjects, "total");
+                case "info": {
+                    output += await this.showInfo(exScoreObjects, args[0], parseInt(args[1]));
                     break;
                 }
                 default: {
-                    return "我不知道你要查什么，关键词有"+enTypes.join("、");
+                    return "???";
                 }
             }
             return output;
