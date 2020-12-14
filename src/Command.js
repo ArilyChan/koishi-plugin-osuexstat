@@ -51,7 +51,7 @@ class Command {
             if (typeIndex < 0) throw "格式不正确\n" + this.helper;
             if (this.typeNeedArg[typeIndex] > this.args.length) {
                 if (this.type === "chart") throw "格式不正确\n请输入exbp [玩家名] ,chart, [对应数据]\n数据有" + this.argList.join("、");
-                else if (this.type === "info") throw "格式不正确\n请输入exbp [玩家名] ,chart, [对应数据], [序号，1-100]\n数据有" + this.argList.join("、");
+                else if (this.type === "info") throw "格式不正确\n请输入exbp [玩家名] ,info, [对应数据], [序号，1-100]\n数据有" + this.argList.join("、");
                 else throw "奇怪的错误，请联系Exsper";
             }
             if (stat.isbusy) return "请再等等QAQ";
