@@ -11,7 +11,7 @@ class beatmapDownloader {
         const filePath = path.join(this.saveDir, `./${bid}.osu`);
         const MAX_RETRY = 20;
         try {
-            let beatmapData = await fetch(`https://osu.ppy.sh/osu/${bid}`, { 
+            let beatmapData = await fetch(`https://osu.ppy.sh/osu/${bid}`, {
                 method: 'GET',
                 headers: { 'Content-Type': 'application/octet-stream' },
                 credentials: 'include',
@@ -33,7 +33,7 @@ class beatmapDownloader {
     async downloadQueue(beatmaps) {
         try {
             for (let i = 0; i < beatmaps.length; i++) {
-                console.log("开始下载" + beatmaps[i])
+                console.log("[" + (i + 1) + "/" + beatmaps.length + "]开始下载" + beatmaps[i])
                 let result = await this.downloadMap(beatmaps[i]);
                 if (result) continue;
                 else break;
