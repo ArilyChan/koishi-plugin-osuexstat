@@ -325,12 +325,12 @@ class getBestScoresData {
             },
             label: {
                 titleY: type,
-                divideX: 1,
+                divideX: 10,
                 divideY: 20
             },
             // font: "15px 宋体",
-            xDateMode: true,
-            xDateLabel: xLabel,
+            // xDateMode: true,
+            // xDateLabel: xLabel,
         });
         const picUrl = chart.draw();
         const base64 = picUrl.substring(picUrl.indexOf(",") + 1);
