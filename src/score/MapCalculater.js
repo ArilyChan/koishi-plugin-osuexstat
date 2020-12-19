@@ -2,6 +2,7 @@
 
 const ojsama = require("ojsama");
 const fs = require('fs');
+// const utils = require("./utils");
 
 class MapCalculater {
     /**
@@ -43,6 +44,9 @@ class MapCalculater {
         this.maxcombo = this.map.max_combo();
         if (!this.combo) this.combo = this.maxcombo;
         this.stars = new ojsama.diff().calc({ map: this.map, mods: this.mods });
+        const firstTime = this.stars.objects[0].obj.time;
+        const lastTime = this.stars.objects[this.stars.objects.length - 1].obj.time;
+        this.rawApproximateLength = Math.ceil((lastTime - firstTime) / 1000);
         this.pp = ojsama.ppv2({
             stars: this.stars,
             combo: this.combo,

@@ -49,6 +49,8 @@ class ScoreObject {
         this.ar = resultStat.ar;
         this.od = resultStat.od;
         this.hp = resultStat.hp;
+        // 只是近似的长度
+        this.applength = Math.floor(mapCalculater.rawApproximateLength / resultStat.speed_mul);
         this.stars = mapCalculater.stars.total;
         let pp = {};
         pp.total = mapCalculater.pp.total;

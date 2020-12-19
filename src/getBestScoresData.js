@@ -26,27 +26,31 @@ class getBestScoresData {
     async statSummery(exScoreObjects) {
         // 分别统计四维和谱面难度，计算各自平均数
         const length = exScoreObjects.length;
-        let maxCS = -100;
-        let minCS = 100;
+        let maxCS = -Infinity;
+        let minCS = Infinity;
         let totalCS = 0;
-        let maxAR = -100;
-        let minAR = 100;
+        let maxAR = -Infinity;
+        let minAR = Infinity;
         let totalAR = 0;
-        let maxOD = -100;
-        let minOD = 100;
+        let maxOD = -Infinity;
+        let minOD = Infinity;
         let totalOD = 0;
-        let maxHP = -100;
-        let minHP = 100;
+        let maxHP = -Infinity;
+        let minHP = Infinity;
         let totalHP = 0;
         let maxStars = 0;
-        let minStars = 100;
+        let minStars = Infinity;
         let totalStars = 0;
+        let maxLength = 0;
+        let minLength = Infinity;
+        let totalLength = 0;
         for (let i = 0; i < length; i++) {
             let cs = exScoreObjects[i].cs;
             let ar = exScoreObjects[i].ar;
             let od = exScoreObjects[i].od;
             let hp = exScoreObjects[i].hp;
             let stars = exScoreObjects[i].stars;
+            let applength = exScoreObjects[i].applength;
             if (cs > maxCS) maxCS = cs;
             if (cs < minCS) minCS = cs;
             totalCS += cs;
@@ -62,12 +66,16 @@ class getBestScoresData {
             if (stars > maxStars) maxStars = stars;
             if (stars < minStars) minStars = stars;
             totalStars += stars;
+            if (applength > maxLength) maxLength = applength;
+            if (applength < minLength) minLength = applength;
+            totalLength += applength;
         }
         let output = "\nCS区间：" + minCS.toFixed(1) + "~" + maxCS.toFixed(1) + "，平均值：" + (totalCS / length).toFixed(1);
         output += "\nAR区间：" + minAR.toFixed(1) + "~" + maxAR.toFixed(1) + "，平均值：" + (totalAR / length).toFixed(1);
         output += "\nOD区间：" + minOD.toFixed(1) + "~" + maxOD.toFixed(1) + "，平均值：" + (totalOD / length).toFixed(1);
         output += "\nHP区间：" + minHP.toFixed(1) + "~" + maxHP.toFixed(1) + "，平均值：" + (totalHP / length).toFixed(1);
         output += "\n难度区间：" + minStars.toFixed(2) + "★~" + maxStars.toFixed(2) + "★，平均值：" + (totalStars / length).toFixed(2) + "★";
+        output += "\n长度（非精确）区间：" + minLength + "秒~" + maxLength + "秒，平均值：" + (totalLength / length).toFixed(1) + "秒";
         return output;
     }
 
@@ -122,7 +130,7 @@ class getBestScoresData {
         // 计算每张图aim-fc aim、aim-ss aim，列出提升空间最大的图
         const length = exScoreObjects.length;
         let maxAim = 0;
-        let minAim = 10000;
+        let minAim = Infinity;
         let maxAimBeatmapTitle = "";
         let totalAim = 0;
         let maxAimVSFC = 0;
@@ -163,7 +171,7 @@ class getBestScoresData {
         // 计算每张图spd-fc spd、spd-ss spd，列出提升空间最大的图
         const length = exScoreObjects.length;
         let maxSpd = 0;
-        let minSpd = 10000;
+        let minSpd = Infinity;
         let maxSpdBeatmapTitle = "";
         let totalSpd = 0;
         let maxSpdVSFC = 0;
@@ -204,7 +212,7 @@ class getBestScoresData {
         // 计算每张图acc-fc acc、acc-ss acc，列出提升空间最大的图
         const length = exScoreObjects.length;
         let maxAcc = 0;
-        let minAcc = 10000;
+        let minAcc = Infinity;
         let maxAccBeatmapTitle = "";
         let totalAcc = 0;
         let maxAccVSFC = 0;
@@ -245,7 +253,7 @@ class getBestScoresData {
         // 计算每张图pp-fc pp、pp-ss pp，列出提升空间最大的图
         const length = exScoreObjects.length;
         let maxPP = 0;
-        let minPP = 10000;
+        let minPP = Infinity;
         let totalPP = 0;
         let maxPPVSFC = 0;
         let maxPPVSSS = 0;
@@ -276,23 +284,29 @@ class getBestScoresData {
     }
 
     async drawChart(exScoreObjects, type) {
-        const statTypes = ["cs", "ar", "od", "hp", "stars"];
-        const ppTypes = ["aim", "speed", "acc", "total"];
+        const statTypes = ["cs", "ar", "od", "hp", "stars", "applength"]; // 对象属性
+        const statKeywords = ["cs", "ar", "od", "hp", "stars", "length"]; // 输入的字符
+        const ppTypes = ["aim", "speed", "acc", "total"]; // 对象属性
+        const ppKeywords = ["aim", "spd", "acc", "pp"];  // 输入的字符
         const length = exScoreObjects.length;
         let data = [];
-        if (statTypes.indexOf(type) >= 0) {
+        let keywordIndex = statKeywords.indexOf(type);
+        if (keywordIndex >= 0) {
             for (let i = 0; i < length; i++) {
-                data.push(exScoreObjects[i][type]);
+                data.push(exScoreObjects[i][statTypes[keywordIndex]]);
             }
         }
-        else if (ppTypes.indexOf(type) >= 0) {
-            for (let i = 0; i < length; i++) {
-                data.push(exScoreObjects[i].pp[type]);
+        else {
+            keywordIndex = ppKeywords.indexOf(type);
+            if (keywordIndex >= 0) {
+                for (let i = 0; i < length; i++) {
+                    data.push(exScoreObjects[i].pp[ppTypes[keywordIndex]]);
+                }
             }
+            else return "限定数据：" + statKeywords.join("、") + "；" + ppKeywords.join("、");
         }
-        else return "限定数据：" + statTypes.join("、") + "；" + ppTypes.join("、");
         // stars保留2位
-        data = data.map((num) => Math.round(num * 100) / 100);
+        // data = data.map((num) => Math.round(num * 100) / 100);
         // 排序
         data = data.sort((a, b) => b - a);
         let points = data.map((d, index) => {
@@ -324,6 +338,7 @@ class getBestScoresData {
                 height: 768
             },
             label: {
+                title: this.user,
                 titleY: type,
                 divideX: 10,
                 divideY: 20
@@ -338,25 +353,31 @@ class getBestScoresData {
     }
 
     async showInfo(exScoreObjects, type, number) {
-        const statTypes = ["cs", "ar", "od", "hp", "stars"];
-        const ppTypes = ["aim", "speed", "acc", "total"];
+        const statTypes = ["cs", "ar", "od", "hp", "stars", "applength"]; // 对象属性
+        const statKeywords = ["cs", "ar", "od", "hp", "stars", "length"]; // 输入的字符
+        const ppTypes = ["aim", "speed", "acc", "total"]; // 对象属性
+        const ppKeywords = ["aim", "spd", "acc", "pp"];  // 输入的字符
         const length = exScoreObjects.length;
         let data = [];
-        if (statTypes.indexOf(type) >= 0) {
+        let keywordIndex = statKeywords.indexOf(type);
+        if (keywordIndex >= 0) {
             for (let i = 0; i < length; i++) {
-                data.push({val: exScoreObjects[i][type], score: exScoreObjects[i]});
+                data.push({val: exScoreObjects[i][statTypes[keywordIndex]], score: exScoreObjects[i]});
             }
         }
-        else if (ppTypes.indexOf(type) >= 0) {
-            for (let i = 0; i < length; i++) {
-                data.push({val: exScoreObjects[i].pp[type], score: exScoreObjects[i]});
+        else {
+            keywordIndex = ppKeywords.indexOf(type);
+            if (keywordIndex >= 0) {
+                for (let i = 0; i < length; i++) {
+                    data.push({val: exScoreObjects[i].pp[ppTypes[keywordIndex]], score: exScoreObjects[i]});
+                }
             }
+            else return "限定数据：" + statKeywords.join("、") + "；" + ppKeywords.join("、");
         }
-        else return "限定数据：" + statTypes.join("、") + "；" + ppTypes.join("、");
         // 排序
         data = data.sort((a, b) => b.val - a.val);
         if (number < 1 || number > length) return "请输入序号：1" + "~" + length;
-        return type + "#" + number + ":\n" + data[number-1].score.toString();
+        return type + "#" + number + ":\n" + data[number - 1].score.toString();
     }
 
     async output(bd, type, args) {

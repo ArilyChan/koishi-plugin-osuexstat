@@ -4,7 +4,7 @@ class Command {
     constructor(message) {
         this.message = message;
         this.typeList = ["map", "per", "aim", "spd", "acc", "pp", "chart", "info"];
-        this.argList = ["cs", "ar", "od", "hp", "stars", "aim", "speed", "acc", "total"];
+        this.argList = ["cs", "ar", "od", "hp", "stars", "length", "aim", "spd", "acc", "pp"];
         this.typeNeedArg = [0, 0, 0, 0, 0, 0, 1, 2];
         this.helper = "请输入exbp [玩家名] ,[关键词] , ...[其他参数]\n关键词有" + this.typeList.join("、");
         this.user = "";
