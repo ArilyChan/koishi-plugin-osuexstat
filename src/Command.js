@@ -5,7 +5,7 @@ class Command {
         this.message = message;
         this.typeList = ["map", "per", "aim", "spd", "acc", "pp", "chart", "chartc", "info"];
         this.argList = ["cs", "ar", "od", "hp", "stars", "length", "aim", "spd", "acc", "pp"];
-        this.typeNeedArg = [0, 0, 0, 0, 0, 0, 1, 2, 2];
+        this.typeNeedArg = [0, 0, 0, 0, 0, 0, 1, 1, 2];
         this.helper = "请输入exbp [玩家名] ,[关键词] , ...[其他参数]\n关键词有" + this.typeList.join("、");
         this.user = "";
         this.type = "";
@@ -51,7 +51,7 @@ class Command {
             if (typeIndex < 0) throw "格式不正确\n" + this.helper;
             if (this.typeNeedArg[typeIndex] > this.args.length) {
                 if (this.type === "chart") throw "格式不正确\n请输入exbp [玩家名] ,chart, [对应数据]\n数据有" + this.argList.join("、");
-                else if (this.type === "chartc") throw "格式不正确\n请输入exbp [玩家名] ,chartc, [aim/spd/acc/pp], [fc/ss]";
+                else if (this.type === "chartc") throw "格式不正确\n请输入exbp [玩家名] ,chartc, [aim/spd/acc/pp]";
                 else if (this.type === "info") throw "格式不正确\n请输入exbp [玩家名] ,info, [对应数据], [序号，1-100]\n数据有" + this.argList.join("、");
                 else throw "奇怪的错误，请联系Exsper";
             }

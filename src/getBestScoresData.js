@@ -352,34 +352,37 @@ class getBestScoresData {
         return `[CQ:image,file=base64://${base64}]`;
     }
 
-    async drawChartCompare(exScoreObjects, type, compType) {
-        const compTypes = ["fcpp", "sspp"]; // 对象属性
-        const compTypesKeywords = ["fc", "ss"]; // 输入的字符
+    async drawChartCompare(exScoreObjects, type) {
         const ppTypes = ["aim", "speed", "acc", "total"]; // 对象属性
         const ppKeywords = ["aim", "spd", "acc", "pp"];  // 输入的字符
         const length = exScoreObjects.length;
-        let compareData = [];
-        let compKeywordIndex = compTypesKeywords.indexOf(compType);
-        if (compKeywordIndex < 0) return "限定比较：" + compTypesKeywords.join("、");
         let ppkeywordIndex = ppKeywords.indexOf(type);
         if (ppkeywordIndex < 0) return "限定数据：" + ppKeywords.join("、");
+        let pp = [];
+        let fcpp = [];
+        let sspp = [];
         for (let i = 0; i < length; i++) {
-            let oldPP = exScoreObjects[i].pp[ppTypes[ppkeywordIndex]];
-            let newPP = exScoreObjects[i][compTypes[compKeywordIndex]][ppTypes[ppkeywordIndex]];
-            compareData.push({ del: (newPP - oldPP), newPP, oldPP });
+            pp.push(exScoreObjects[i].pp[ppTypes[ppkeywordIndex]]);
+            fcpp.push(exScoreObjects[i].fcpp[ppTypes[ppkeywordIndex]]);
+            sspp.push(exScoreObjects[i].sspp[ppTypes[ppkeywordIndex]]);
         }
-        compareData = compareData.sort((a, b) => b.del - a.del);
-        let pointsOld = compareData.map((d, index) => {
-            return { x: index + 1, y: d.oldPP };
-        });
-        let pointsNew = compareData.map((d, index) => {
-            return { x: index + 1, y: d.newPP };
-        });
+        pp = pp.sort((a, b) => b - a);
+        fcpp = fcpp.sort((a, b) => b - a);
+        sspp = sspp.sort((a, b) => b - a);
         let xLabel = new Array(length);
         for (let i = 0; i < length; ++i) {
             xLabel[i] = i + 1;
         }
-        const chart = new Chart([{ name: "If " + compTypesKeywords + " " + ppTypes[ppkeywordIndex], points: pointsNew }, { name: ppTypes[ppkeywordIndex], points: pointsOld }], {
+        let points_pp = pp.map((d, index) => {
+            return { x: index + 1, y: d };
+        });
+        let points_fcpp = fcpp.map((d, index) => {
+            return { x: index + 1, y: d };
+        });
+        let points_sspp = sspp.map((d, index) => {
+            return { x: index + 1, y: d };
+        });
+        const chart = new Chart([{ name: "If SS "+ ppTypes[ppkeywordIndex], points: points_sspp }, { name: "If FC "+ ppTypes[ppkeywordIndex], points: points_fcpp }, { name: ppTypes[ppkeywordIndex], points: points_pp }], {
             padding: {
                 up: 100,
                 down: 80,
@@ -499,7 +502,7 @@ class getBestScoresData {
                     break;
                 }
                 case "chartc": {
-                    output += await this.drawChartCompare(exScoreObjects, args[0], args[1]);
+                    output += await this.drawChartCompare(exScoreObjects, args[0]);
                     break;
                 }
                 case "info": {
