@@ -316,7 +316,7 @@ class getBestScoresData {
         for (let i = 0; i < length; ++i) {
             xLabel[i] = i + 1;
         }
-        const chart = new Chart(points, {
+        const chart = new Chart([{ points }], {
             padding: {
                 up: 100,
                 down: 80,
@@ -352,6 +352,67 @@ class getBestScoresData {
         return `[CQ:image,file=base64://${base64}]`;
     }
 
+    async drawChartCompare(exScoreObjects, type, compType) {
+        const compTypes = ["fcpp", "sspp"]; // 对象属性
+        const compTypesKeywords = ["fc", "ss"]; // 输入的字符
+        const ppTypes = ["aim", "speed", "acc", "total"]; // 对象属性
+        const ppKeywords = ["aim", "spd", "acc", "pp"];  // 输入的字符
+        const length = exScoreObjects.length;
+        let compareData = [];
+        let compKeywordIndex = compTypesKeywords.indexOf(compType);
+        if (compKeywordIndex < 0) return "限定比较：" + compTypesKeywords.join("、");
+        let ppkeywordIndex = ppKeywords.indexOf(type);
+        if (ppkeywordIndex < 0) return "限定数据：" + ppKeywords.join("、");
+        for (let i = 0; i < length; i++) {
+            let oldPP = exScoreObjects[i].pp[ppTypes[ppkeywordIndex]];
+            let newPP = exScoreObjects[i][compTypes[compKeywordIndex]][ppTypes[ppkeywordIndex]];
+            compareData.push({ del: (newPP - oldPP), newPP, oldPP });
+        }
+        compareData = compareData.sort((a, b) => b.del - a.del);
+        let pointsOld = compareData.map((d, index) => {
+            return { x: index + 1, y: d.oldPP };
+        });
+        let pointsNew = compareData.map((d, index) => {
+            return { x: index + 1, y: d.newPP };
+        });
+        let xLabel = new Array(length);
+        for (let i = 0; i < length; ++i) {
+            xLabel[i] = i + 1;
+        }
+        const chart = new Chart([{ name: "If " + compTypesKeywords + " " + ppTypes[ppkeywordIndex], points: pointsNew }, { name: ppTypes[ppkeywordIndex], points: pointsOld }], {
+            padding: {
+                up: 100,
+                down: 80,
+                left: 100,
+                right: 100
+            },
+            color: {
+                background: "white",
+                title: "#000000",
+                titleX: "#005cc5",
+                titleY: "#7d04c8",
+                coordinate: "#000000",
+                grid: "#999999"
+            },
+            size: {
+                width: 1024,
+                height: 768
+            },
+            label: {
+                title: this.user,
+                titleY: type,
+                divideX: 10,
+                divideY: 20
+            },
+            // font: "15px 宋体",
+            // xDateMode: true,
+            // xDateLabel: xLabel,
+        });
+        const picUrl = chart.draw();
+        const base64 = picUrl.substring(picUrl.indexOf(",") + 1);
+        return `[CQ:image,file=base64://${base64}]`;
+    }
+
     async showInfo(exScoreObjects, type, number) {
         const statTypes = ["cs", "ar", "od", "hp", "stars", "applength"]; // 对象属性
         const statKeywords = ["cs", "ar", "od", "hp", "stars", "length"]; // 输入的字符
@@ -362,14 +423,14 @@ class getBestScoresData {
         let keywordIndex = statKeywords.indexOf(type);
         if (keywordIndex >= 0) {
             for (let i = 0; i < length; i++) {
-                data.push({val: exScoreObjects[i][statTypes[keywordIndex]], score: exScoreObjects[i]});
+                data.push({ val: exScoreObjects[i][statTypes[keywordIndex]], score: exScoreObjects[i] });
             }
         }
         else {
             keywordIndex = ppKeywords.indexOf(type);
             if (keywordIndex >= 0) {
                 for (let i = 0; i < length; i++) {
-                    data.push({val: exScoreObjects[i].pp[ppTypes[keywordIndex]], score: exScoreObjects[i]});
+                    data.push({ val: exScoreObjects[i].pp[ppTypes[keywordIndex]], score: exScoreObjects[i] });
                 }
             }
             else return "限定数据：" + statKeywords.join("、") + "；" + ppKeywords.join("、");
@@ -435,6 +496,10 @@ class getBestScoresData {
                 }
                 case "chart": {
                     output += await this.drawChart(exScoreObjects, args[0]);
+                    break;
+                }
+                case "chartc": {
+                    output += await this.drawChartCompare(exScoreObjects, args[0], args[1]);
                     break;
                 }
                 case "info": {

@@ -5,7 +5,7 @@ const fetch = require('node-fetch');
 
 class OsuApi {
     static async apiCall(_path, _data, _host, times = 0) {
-        const MAX_RETRY = 5;
+        const MAX_RETRY = 10;
         try {
             const contents = querystring.stringify(_data);
             const url = "https://" + _host + "/api" + _path + '?' + contents;
@@ -14,7 +14,7 @@ class OsuApi {
                 method: 'GET',
                 headers: { 'Content-Type': 'application/octet-stream' },
                 credentials: 'include',
-                timeout: 20000,
+                timeout: 10000,
             }).then(res => res.json());
             if (!data) return { code: "error" };
             const dataString = JSON.stringify(data);
