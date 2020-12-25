@@ -11,7 +11,7 @@ class ScoreObject {
         // this.score_id = score.score_id;
         this.score = score.score;
         // this.user_id = score.user_id;
-        // this.time = score.date; // 字符串格式，YYYY-MM-DDTHH:MM:SSZ
+        this.time = new Date(score.date + " UTC"); // 字符串格式，YYYY-MM-DDTHH:MM:SSZ
         this.combo = parseInt(score.maxcombo);
         this.count50 = parseInt(score.count50);
         this.count100 = parseInt(score.count100);

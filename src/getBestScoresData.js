@@ -316,21 +316,18 @@ class getBestScoresData {
         for (let i = 0; i < length; ++i) {
             xLabel[i] = i + 1;
         }
-        const chart = new Chart([{ points }], {
-            padding: {
-                up: 100,
-                down: 80,
-                left: 100,
-                right: 100
-            },
+        const chart = new Chart([{
+            points, configs: {
+                lineColor: "#ff9898",
+                pointFillColor: "#ff5757"
+            }
+        }], {
             color: {
                 background: "white",
                 title: "#000000",
                 titleX: "#005cc5",
                 titleY: "#7d04c8",
                 coordinate: "#000000",
-                line: "#ff9898",
-                pointFill: "#ff5757",
                 grid: "#999999"
             },
             size: {
@@ -346,6 +343,59 @@ class getBestScoresData {
             // font: "15px 宋体",
             // xDateMode: true,
             // xDateLabel: xLabel,
+        });
+        const picUrl = chart.draw();
+        const base64 = picUrl.substring(picUrl.indexOf(",") + 1);
+        return `[CQ:image,file=base64://${base64}]`;
+    }
+
+    async drawChartDate(exScoreObjects, timezoneOffsetHours = 8) {
+        timezoneOffsetHours = parseInt(timezoneOffsetHours);
+        if (!timezoneOffsetHours) return "请输入正确的时区，默认为+8"
+        const length = exScoreObjects.length;
+        let data = [];
+        for (let i = 0; i < length; i++) {
+            let time = exScoreObjects[i].time;
+            let localHours = (time.getUTCHours() + timezoneOffsetHours) % 24;
+            if (localHours < 0) localHours += 24;
+            let SecondsInDay = localHours * 3600 + time.getUTCMinutes() * 60 + time.getUTCSeconds();
+            data.push({ pp: exScoreObjects[i].pp.total, time: SecondsInDay });
+        }
+        data = data.sort((a, b) => a.time - b.time);
+        let points = data.map((d) => {
+            return { x: d.time/3600, y: d.pp };
+        });
+        const chart = new Chart([{
+            points, configs: {
+                lineColor: "#ff9898",
+                pointFillColor: "#ff5757"
+            }
+        }], {
+            padding: {
+                up: 100,
+                down: 80,
+                left: 100,
+                right: 100
+            },
+            color: {
+                background: "white",
+                title: "#000000",
+                titleX: "#005cc5",
+                titleY: "#7d04c8",
+                coordinate: "#000000",
+                grid: "#999999"
+            },
+            size: {
+                width: 1024,
+                height: 768
+            },
+            label: {
+                title: this.user,
+                titleX: "time",
+                titleY: "pp",
+                divideX: 50,
+                divideY: 20
+            }
         });
         const picUrl = chart.draw();
         const base64 = picUrl.substring(picUrl.indexOf(",") + 1);
@@ -382,7 +432,7 @@ class getBestScoresData {
         let points_sspp = sspp.map((d, index) => {
             return { x: index + 1, y: d };
         });
-        const chart = new Chart([{ name: "If SS "+ ppTypes[ppkeywordIndex], points: points_sspp }, { name: "If FC "+ ppTypes[ppkeywordIndex], points: points_fcpp }, { name: ppTypes[ppkeywordIndex], points: points_pp }], {
+        const chart = new Chart([{ name: "If SS " + ppTypes[ppkeywordIndex], points: points_sspp }, { name: "If FC " + ppTypes[ppkeywordIndex], points: points_fcpp }, { name: ppTypes[ppkeywordIndex], points: points_pp }], {
             padding: {
                 up: 100,
                 down: 80,
@@ -503,6 +553,10 @@ class getBestScoresData {
                 }
                 case "chartc": {
                     output += await this.drawChartCompare(exScoreObjects, args[0]);
+                    break;
+                }
+                case "date": {
+                    output += await this.drawChartDate(exScoreObjects, args[0]);
                     break;
                 }
                 case "info": {
