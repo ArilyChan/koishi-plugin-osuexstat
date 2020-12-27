@@ -1,5 +1,6 @@
 const BeatmapDownloader = require("./src/beatmapDownloader");
-const Command = require("./src/Command");
+const Command = require("./src/Command/Command");
+const CommandsInfo = require("./src/Command/CommandInfo")
 
 class osuexstat {
     /**
@@ -15,6 +16,7 @@ class osuexstat {
         this.prefixs = params.prefixs || ["!", "！"];
         this.mapFolder = params.mapFolder || './beatmap/';
         this.bd = new BeatmapDownloader(this.mapFolder);
+        this.commandsInfo = new CommandsInfo();
     }
 
     /**
@@ -27,7 +29,7 @@ class osuexstat {
             if (!message.length || message.length < 2) return "";
             if (this.prefixs.indexOf(message.substring(0, 1)) < 0) return "";
             let commandObject = new Command(message.substring(1).trim());
-            let reply = await commandObject.apply(stat, this.host, this.apiKey, this.mapFolder,this.bd);
+            let reply = await commandObject.apply(stat, this.host, this.apiKey, this.mapFolder, this.bd, this.commandsInfo);
             return reply;
         } catch (ex) {
             console.log(ex);
@@ -41,7 +43,7 @@ module.exports.osuexstat = osuexstat;
 module.exports.name = 'koishi-plugin-osuexstat';
 module.exports.apply = (ctx, options) => {
     const exs = new osuexstat(options);
-    let stat = {isbusy: false};
+    let stat = { isbusy: false };
     ctx.middleware(async (meta, next) => {
         try {
             const message = meta.message;
