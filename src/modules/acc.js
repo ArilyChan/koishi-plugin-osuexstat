@@ -24,27 +24,28 @@ module.exports = {
             let maxAccVSSS = 0;
             let maxFCImpAccBeatmapTitle = "";
             let maxSSImpAccBeatmapTitle = "";
-            for (let i = 0; i < length; i++) {
-                const acc = exScoreObjects[i].pp.acc;
-                const accFC = exScoreObjects[i].fcpp.acc;
-                const accSS = exScoreObjects[i].sspp.acc;
+            // eslint-disable-next-line array-callback-return
+            exScoreObjects.map((exScoreObject) => {
+                const acc = exScoreObject.pp.acc;
+                const accFC = exScoreObject.fcpp.acc;
+                const accSS = exScoreObject.sspp.acc;
                 const accVSFC = accFC - acc;
                 const accVSSS = accSS - acc;
                 if (acc > maxAcc) {
                     maxAcc = acc;
-                    maxAccBeatmapTitle = exScoreObjects[i].beatmapTitle;
+                    maxAccBeatmapTitle = exScoreObject.beatmapTitle;
                 }
                 if (acc < minAcc) minAcc = acc;
                 totalAcc += acc;
                 if (accVSFC > maxAccVSFC) {
                     maxAccVSFC = accVSFC;
-                    maxFCImpAccBeatmapTitle = exScoreObjects[i].beatmapTitle;
+                    maxFCImpAccBeatmapTitle = exScoreObject.beatmapTitle;
                 }
                 if (accVSSS > maxAccVSSS) {
                     maxAccVSSS = accVSSS;
-                    maxSSImpAccBeatmapTitle = exScoreObjects[i].beatmapTitle;
+                    maxSSImpAccBeatmapTitle = exScoreObject.beatmapTitle;
                 }
-            }
+            });
             let output = "\nAcc区间：" + minAcc.toFixed(0) + "~" + maxAcc.toFixed(0) + "，平均值：" + (totalAcc / length).toFixed(0);
             output += "\nAcc最高谱面：" + maxAccBeatmapTitle;
             output += "\n如果FC，Acc可以提升最大：" + maxAccVSFC.toFixed(0) + "，谱面：" + maxFCImpAccBeatmapTitle;
