@@ -35,11 +35,12 @@ class ScoreObject {
         if (map.artist_unicode === "") map.artist_unicode = map.artist;
         if (map.title_unicode === "") map.title_unicode = map.title;
         this.beatmapTitle = this.beatmap_id + " " + map.artist_unicode + " - " + map.title_unicode + " (" + map.creator + ") [" + map.version + "]";
-        const ar = map.ar;
-        const od = map.od;
-        const hp = map.hp;
-        const cs = map.cs;
-        const resultStat = mapCalculator.calculateStatWithMods({ ar, od, hp, cs }, this.mods);
+        // const ar = map.ar;
+        // const od = map.od;
+        // const hp = map.hp;
+        // const cs = map.cs;
+        const { ar, od, hp, cs } = map;
+        const resultStat = await mapCalculator.calculateStatWithMods({ ar, od, hp, cs }, this.mods);
         this.fullCombo = mapCalculator.maxcombo;
         this.cs = resultStat.cs;
         this.ar = resultStat.ar;
@@ -48,24 +49,37 @@ class ScoreObject {
         // 只是近似的长度
         this.applength = Math.floor(mapCalculator.rawApproximateLength / resultStat.speed_mul);
         this.stars = mapCalculator.stars.total;
-        const pp = {};
-        pp.total = mapCalculator.pp.total;
-        pp.aim = mapCalculator.pp.aim;
-        pp.acc = mapCalculator.pp.acc;
-        pp.speed = mapCalculator.pp.speed;
-        this.pp = pp;
-        const fcpp = {};
-        fcpp.total = mapCalculator.fcpp.total;
-        fcpp.aim = mapCalculator.fcpp.aim;
-        fcpp.acc = mapCalculator.fcpp.acc;
-        fcpp.speed = mapCalculator.fcpp.speed;
-        this.fcpp = fcpp;
-        const sspp = {};
-        sspp.total = mapCalculator.sspp.total;
-        sspp.aim = mapCalculator.sspp.aim;
-        sspp.acc = mapCalculator.sspp.acc;
-        sspp.speed = mapCalculator.sspp.speed;
-        this.sspp = sspp;
+        // const pp = {};
+        // pp.total = mapCalculator.pp.total;
+        // pp.aim = mapCalculator.pp.aim;
+        // pp.acc = mapCalculator.pp.acc;
+        // pp.speed = mapCalculator.pp.speed;
+        // this.pp = pp;
+        // const fcpp = {};
+        // fcpp.total = mapCalculator.fcpp.total;
+        // fcpp.aim = mapCalculator.fcpp.aim;
+        // fcpp.acc = mapCalculator.fcpp.acc;
+        // fcpp.speed = mapCalculator.fcpp.speed;
+        // this.fcpp = fcpp;
+        // const sspp = {};
+        // sspp.total = mapCalculator.sspp.total;
+        // sspp.aim = mapCalculator.sspp.aim;
+        // sspp.acc = mapCalculator.sspp.acc;
+        // sspp.speed = mapCalculator.sspp.speed;
+        // this.sspp = sspp;
+
+        // eslint-disable-next-line no-extra-semi
+        ;["pp", "fcpp", "sspp"].forEach((i) => {
+            const pp = {};
+            pp.total = mapCalculator[i].total;
+            pp.aim = mapCalculator[i].aim;
+            pp.acc = mapCalculator[i].acc;
+            pp.speed = mapCalculator[i].speed;
+            this[i] = pp;
+        });
+
+        mapCalculator.terminateWorker();
+
         return this;
     }
     toString() {

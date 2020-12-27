@@ -1,7 +1,9 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable new-cap */
-const ojsama = require("ojsama");
+// const ojsama = require("ojsama");
 const fs = require("fs");
+
+const { spawn, Thread, Worker } = require("threads");
 // const utils = require("./utils");
 class MapCalculator {
     /**
@@ -22,6 +24,7 @@ class MapCalculator {
         this.nmiss = options.nmiss || 0;
         // (options.acc) ? this.acc = options.acc : 100;
         this.acc = options.acc || 100;
+
     }
     getMap() {
         return new Promise((resolve) => {
@@ -32,37 +35,19 @@ class MapCalculator {
         });
     }
     calculateStatWithMods(values, mods) {
-        return new ojsama.std_beatmap_stats(values).with_mods(mods);
+        // return new ojsama.std_beatmap_stats(values).with_mods(mods);
+        return this.worker.calculateStatWithMods({ values, mods });
     }
     async init() {
+        this.worker = await spawn(new Worker("./workers/calculator-worker"));
         const rawBeatmap = await this.getMap();
-        const { map } = new ojsama.parser().feed(rawBeatmap);
-        this.map = map;
-        this.maxcombo = this.map.max_combo();
-        if (!this.combo) this.combo = this.maxcombo;
-        this.stars = new ojsama.diff().calc({ map: this.map, mods: this.mods });
-        const firstTime = this.stars.objects[0].obj.time;
-        const lastTime = this.stars.objects[this.stars.objects.length - 1].obj.time;
-        this.rawApproximateLength = Math.ceil((lastTime - firstTime) / 1000);
-        this.pp = ojsama.ppv2({
-            stars: this.stars,
-            combo: this.combo,
-            nmiss: this.nmiss,
-            acc_percent: this.acc,
-        });
-        this.fcpp = ojsama.ppv2({
-            stars: this.stars,
-            combo: this.maxcombo,
-            nmiss: 0,
-            acc_percent: this.acc,
-        });
-        this.sspp = ojsama.ppv2({
-            stars: this.stars,
-            combo: this.maxcombo,
-            nmiss: 0,
-            acc_percent: 100,
-        });
-        return this;
+        const result = await this.worker.init(this, { rawBeatmap });
+        // return this;
+        return Object.assign(this, result);
+    }
+
+    terminateWorker() {
+        return Thread.terminate(this.worker);
     }
 }
 module.exports = MapCalculator;
