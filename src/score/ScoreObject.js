@@ -69,14 +69,20 @@ class ScoreObject {
         // this.sspp = sspp;
 
         // eslint-disable-next-line no-extra-semi
+        // ;["pp", "fcpp", "sspp"].forEach((i) => {
+        //     const pp = { ...mapCalculator[i] };
+        //     // pp.total = mapCalculator[i].total;
+        //     // pp.aim = mapCalculator[i].aim;
+        //     // pp.acc = mapCalculator[i].acc;
+        //     // pp.speed = mapCalculator[i].speed;
+        //     this[i] = pp;
+        // });
+
+        // eslint-disable-next-line no-extra-semi
         ;["pp", "fcpp", "sspp"].forEach((i) => {
-            const pp = {};
-            pp.total = mapCalculator[i].total;
-            pp.aim = mapCalculator[i].aim;
-            pp.acc = mapCalculator[i].acc;
-            pp.speed = mapCalculator[i].speed;
-            this[i] = pp;
+            this[i] = mapCalculator[i];
         });
+
 
         mapCalculator.terminateWorker();
 
