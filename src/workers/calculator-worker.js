@@ -1,10 +1,17 @@
 /* eslint-disable new-cap */
 const { expose } = require("threads/worker");
 const ojsama = require("ojsama");
+const fs = require("fs");
 
 expose({
-    init(vm, { rawBeatmap }) {
-        const { map } = new ojsama.parser().feed(rawBeatmap);
+    async init(vm) {
+        const rawBeatmap = new Promise((resolve) => {
+            fs.readFile(vm.beatmapFile, "utf-8", (err, data) => {
+                if (err) throw err;
+                resolve(data);
+            });
+        });
+        const { map } = new ojsama.parser().feed(await rawBeatmap);
         vm.map = map;
         vm.maxcombo = vm.map.max_combo();
         if (!vm.combo) vm.combo = vm.maxcombo;

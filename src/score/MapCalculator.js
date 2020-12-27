@@ -1,7 +1,6 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable new-cap */
 // const ojsama = require("ojsama");
-const fs = require("fs");
 
 const { spawn, Thread, Worker } = require("threads");
 // const utils = require("./utils");
@@ -26,22 +25,21 @@ class MapCalculator {
         this.acc = options.acc || 100;
 
     }
-    getMap() {
-        return new Promise((resolve) => {
-            fs.readFile(this.beatmapFile, "utf-8", (err, data) => {
-                if (err) throw err;
-                resolve(data);
-            });
-        });
-    }
+    // getMap() {
+    //     return new Promise((resolve) => {
+    //         fs.readFile(this.beatmapFile, "utf-8", (err, data) => {
+    //             if (err) throw err;
+    //             resolve(data);
+    //         });
+    //     });
+    // }
     calculateStatWithMods(values, mods) {
         // return new ojsama.std_beatmap_stats(values).with_mods(mods);
         return this.worker.calculateStatWithMods({ values, mods });
     }
     async init() {
         this.worker = await spawn(new Worker("../workers/calculator-worker"));
-        const rawBeatmap = await this.getMap();
-        const result = await this.worker.init(this.toJSON(), { rawBeatmap });
+        const result = await this.worker.init(this.toJSON());
         // return this;
         return Object.assign(this, result);
     }
@@ -51,7 +49,7 @@ class MapCalculator {
     }
 
     toJSON() {
-        return { mods: this.mods, combo: this.combo, nmiss: this.nmiss, acc: this.acc }
+        return { mods: this.mods, combo: this.combo, nmiss: this.nmiss, acc: this.acc, beatmapFile: this.beatmapFile };
     }
 }
 module.exports = MapCalculator;
