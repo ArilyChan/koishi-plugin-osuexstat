@@ -1,17 +1,17 @@
 
-const getBestScoresData = require("../getBestScoresData");
+const GetBestScoresData = require("../getBestScoresData");
 module.exports = {
     enabled: true,
     adminCommand: false,
-    type: 'per',
-    info: 'pp分配',
-    command: ['per'],
-    argsInfo: '[玩家名]',
+    type: "per",
+    info: "pp分配",
+    command: ["per"],
+    argsInfo: "[玩家名]",
     call: async (host, apiKey, saveDir, downloader, args) => {
         try {
             const user = args[0];
             if (!user) throw "格式不正确\n请输入exbp " + module.exports.command[0] + ", " + module.exports.argsInfo;
-            let exScoreObjects = await new getBestScoresData(host, apiKey, user, saveDir).getBestScoresObject(downloader);
+            const exScoreObjects = await new GetBestScoresData(host, apiKey, user, saveDir).getBestScoresObject(downloader);
             // 计算每张图pp分配，找出3维各自最大比重的那张图
             // 计算总3维和总pp，统计3维总共占百分比
             const length = exScoreObjects.length;
@@ -26,19 +26,19 @@ module.exports = {
             let totalAcc = 0;
             let totalPP = 0;
             for (let i = 0; i < length; i++) {
-                let aimPer = exScoreObjects[i].pp.aim / exScoreObjects[i].pp.total;
+                const aimPer = exScoreObjects[i].pp.aim / exScoreObjects[i].pp.total;
                 totalAim += exScoreObjects[i].pp.aim;
                 if (aimPer > maxAimPer) {
                     maxAimPer = aimPer;
                     maxAimBeatmapTitle = exScoreObjects[i].beatmapTitle;
                 }
-                let spdPer = exScoreObjects[i].pp.speed / exScoreObjects[i].pp.total;
+                const spdPer = exScoreObjects[i].pp.speed / exScoreObjects[i].pp.total;
                 totalSpd += exScoreObjects[i].pp.speed;
                 if (spdPer > maxSpdPer) {
                     maxSpdPer = spdPer;
                     maxSpdBeatmapTitle = exScoreObjects[i].beatmapTitle;
                 }
-                let accPer = exScoreObjects[i].pp.acc / exScoreObjects[i].pp.total;
+                const accPer = exScoreObjects[i].pp.acc / exScoreObjects[i].pp.total;
                 totalAcc += exScoreObjects[i].pp.acc;
                 if (accPer > maxAccPer) {
                     maxAccPer = accPer;

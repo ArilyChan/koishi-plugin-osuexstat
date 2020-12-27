@@ -1,24 +1,24 @@
 
-const getBestScoresData = require("../getBestScoresData");
-const Chart = require('lchart');
+const GetBestScoresData = require("../getBestScoresData");
+const Chart = require("lchart");
 module.exports = {
     enabled: true,
     adminCommand: false,
-    type: 'chartc',
-    info: 'Ifpp比较',
-    command: ['chartc'],
-    argsInfo: '[玩家名], [对应数据]',
+    type: "chartc",
+    info: "Ifpp比较",
+    command: ["chartc"],
+    argsInfo: "[玩家名], [对应数据]",
     argList: ["aim", "spd", "acc", "pp"],
     call: async (host, apiKey, saveDir, downloader, args) => {
         try {
             const user = args[0];
             const type = args[1];
             if (!user || !type || module.exports.argList.indexOf(type) < 0) throw "格式不正确\n请输入exbp " + module.exports.command[0] + ", " + module.exports.argsInfo + "\n数据有：" + module.exports.argList.join("、");
-            let exScoreObjects = await new getBestScoresData(host, apiKey, user, saveDir).getBestScoresObject(downloader);
+            const exScoreObjects = await new GetBestScoresData(host, apiKey, user, saveDir).getBestScoresObject(downloader);
             const ppTypes = ["aim", "speed", "acc", "total"]; // 对象属性
             const ppKeywords = ["aim", "spd", "acc", "pp"];  // 输入的字符
             const length = exScoreObjects.length;
-            let ppkeywordIndex = ppKeywords.indexOf(type);
+            const ppkeywordIndex = ppKeywords.indexOf(type);
             if (ppkeywordIndex < 0) return "限定数据：" + ppKeywords.join("、");
             let pp = [];
             let fcpp = [];
@@ -31,17 +31,17 @@ module.exports = {
             pp = pp.sort((a, b) => b - a);
             fcpp = fcpp.sort((a, b) => b - a);
             sspp = sspp.sort((a, b) => b - a);
-            let xLabel = new Array(length);
+            const xLabel = new Array(length);
             for (let i = 0; i < length; ++i) {
                 xLabel[i] = i + 1;
             }
-            let points_pp = pp.map((d, index) => {
+            const points_pp = pp.map((d, index) => {
                 return { x: index + 1, y: d };
             });
-            let points_fcpp = fcpp.map((d, index) => {
+            const points_fcpp = fcpp.map((d, index) => {
                 return { x: index + 1, y: d };
             });
-            let points_sspp = sspp.map((d, index) => {
+            const points_sspp = sspp.map((d, index) => {
                 return { x: index + 1, y: d };
             });
             const chart = new Chart([{ name: "If SS " + ppTypes[ppkeywordIndex], points: points_sspp }, { name: "If FC " + ppTypes[ppkeywordIndex], points: points_fcpp }, { name: ppTypes[ppkeywordIndex], points: points_pp }], {

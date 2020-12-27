@@ -1,13 +1,13 @@
 
-const getBestScoresData = require("../getBestScoresData");
-const Chart = require('lchart');
+const GetBestScoresData = require("../getBestScoresData");
+const Chart = require("lchart");
 module.exports = {
     enabled: true,
     adminCommand: false,
-    type: 'chart',
-    info: '折线图',
-    command: ['chart'],
-    argsInfo: '[玩家名，多玩家以/分隔], [对应数据]',
+    type: "chart",
+    info: "折线图",
+    command: ["chart"],
+    argsInfo: "[玩家名，多玩家以/分隔], [对应数据]",
     argList: ["cs", "ar", "od", "hp", "stars", "length", "aim", "spd", "acc", "pp"],
     getDrawData: (exScoreObjects, type) => {
         const statTypes = ["cs", "ar", "od", "hp", "stars", "applength"]; // 对象属性
@@ -35,7 +35,7 @@ module.exports = {
         // data = data.map((num) => Math.round(num * 100) / 100);
         // 排序
         data = data.sort((a, b) => b - a);
-        let points = data.map((d, index) => {
+        const points = data.map((d, index) => {
             return { x: index + 1, y: d };
         });
         return points;
@@ -49,11 +49,11 @@ module.exports = {
             const user = users.split(/\//);
             if (user.length < 1) throw "玩家名不正确，多玩家以/分隔";
             if (user.length > MAX_PLAYER_COUNT) throw "考虑到下载任务，暂时只支持" + MAX_PLAYER_COUNT + "个玩家对比";
-            let drawDatas = [];
+            const drawDatas = [];
             for (let i = 0; i < user.length; i++) {
-                let exScoreObjects = await new getBestScoresData(host, apiKey, user[i], saveDir).getBestScoresObject(downloader);
+                const exScoreObjects = await new GetBestScoresData(host, apiKey, user[i], saveDir).getBestScoresObject(downloader);
                 if (exScoreObjects) {
-                    drawDatas.push({"name":user[i], "points": module.exports.getDrawData(exScoreObjects,type)});
+                    drawDatas.push({ "name": user[i], "points": module.exports.getDrawData(exScoreObjects, type) });
                     continue;
                 }
                 else break;

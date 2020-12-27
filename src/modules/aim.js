@@ -1,17 +1,17 @@
 
-const getBestScoresData = require("../getBestScoresData");
+const GetBestScoresData = require("../getBestScoresData");
 module.exports = {
     enabled: true,
     adminCommand: false,
-    type: 'aim',
-    info: 'aim查询',
-    command: ['aim'],
-    argsInfo: '[玩家名]',
+    type: "aim",
+    info: "aim查询",
+    command: ["aim"],
+    argsInfo: "[玩家名]",
     call: async (host, apiKey, saveDir, downloader, args) => {
         try {
             const user = args[0];
             if (!user) throw "格式不正确\n请输入exbp " + module.exports.command[0] + ", " + module.exports.argsInfo;
-            let exScoreObjects = await new getBestScoresData(host, apiKey, user, saveDir).getBestScoresObject(downloader);
+            const exScoreObjects = await new GetBestScoresData(host, apiKey, user, saveDir).getBestScoresObject(downloader);
             // 统计出aim区间，最大最小值并绘图
             // 计算每张图aim-fc aim、aim-ss aim，列出提升空间最大的图
             const length = exScoreObjects.length;
@@ -24,11 +24,11 @@ module.exports = {
             let maxFCImpAimBeatmapTitle = "";
             let maxSSImpAimBeatmapTitle = "";
             for (let i = 0; i < length; i++) {
-                let aim = exScoreObjects[i].pp.aim;
-                let aimFC = exScoreObjects[i].fcpp.aim;
-                let aimSS = exScoreObjects[i].sspp.aim;
-                let aimVSFC = aimFC - aim;
-                let aimVSSS = aimSS - aim;
+                const aim = exScoreObjects[i].pp.aim;
+                const aimFC = exScoreObjects[i].fcpp.aim;
+                const aimSS = exScoreObjects[i].sspp.aim;
+                const aimVSFC = aimFC - aim;
+                const aimVSSS = aimSS - aim;
                 if (aim > maxAim) {
                     maxAim = aim;
                     maxAimBeatmapTitle = exScoreObjects[i].beatmapTitle;
