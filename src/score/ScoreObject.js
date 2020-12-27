@@ -30,7 +30,7 @@ class ScoreObject {
     }
     async extendScore() {
         // 获取谱面信息
-        const mapCalculator = await new MapCalculator(this.beatmapFile, { mods: this.mods, combo: this.maxcombo, nmiss: this.countmiss, acc: this.acc }).init();
+        const mapCalculator = await new MapCalculator(this.beatmapFile, { mods: this.mods, combo: this.combo, nmiss: this.countmiss, acc: this.acc }).init();
         const map = mapCalculator.map;
         if (map.artist_unicode === "") map.artist_unicode = map.artist;
         if (map.title_unicode === "") map.title_unicode = map.title;
