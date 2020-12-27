@@ -39,15 +39,19 @@ class MapCalculator {
         return this.worker.calculateStatWithMods({ values, mods });
     }
     async init() {
-        this.worker = await spawn(new Worker("./workers/calculator-worker"));
+        this.worker = await spawn(new Worker("../workers/calculator-worker"));
         const rawBeatmap = await this.getMap();
-        const result = await this.worker.init(this, { rawBeatmap });
+        const result = await this.worker.init(this.toJSON(), { rawBeatmap });
         // return this;
         return Object.assign(this, result);
     }
 
     terminateWorker() {
         return Thread.terminate(this.worker);
+    }
+
+    toJSON() {
+        return { mods: this.mods, combo: this.combo, nmiss: this.nmiss, acc: this.acc }
     }
 }
 module.exports = MapCalculator;

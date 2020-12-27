@@ -1,5 +1,5 @@
 /* eslint-disable new-cap */
-const expose = require("threads/worker");
+const { expose } = require("threads/worker");
 const ojsama = require("ojsama");
 
 expose({
