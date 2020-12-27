@@ -39,7 +39,7 @@ class MapCalculator {
         return this.worker.calculateStatWithMods({ values, mods });
     }
     async init() {
-        this.worker = await spawn(new Worker("./workers/calculator-worker"));
+        this.worker = await spawn(new Worker("../workers/calculator-worker"));
         const rawBeatmap = await this.getMap();
         const result = await this.worker.init(this, { rawBeatmap });
         // return this;
