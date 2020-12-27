@@ -4,7 +4,6 @@ class Command {
         this.type = "";
         this.args = [];
     }
-
     /**
      * 拆出指令和参数
      * @param {RegExp} commandReg 
@@ -19,7 +18,6 @@ class Command {
             return true;
         }
     }
-
     /**
      * 分析argString
      */
@@ -32,7 +30,6 @@ class Command {
         this.type = args[0];
         this.args = args.slice(1); // 不足则为[]
     }
-
     async apply(stat, host, apiKey, saveDir, downloader, commandsInfo) {
         try {
             if (!this.cutCommand()) return "";
@@ -58,5 +55,4 @@ class Command {
         }
     }
 }
-
 module.exports = Command;

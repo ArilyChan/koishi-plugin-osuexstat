@@ -1,8 +1,6 @@
-"use strict";
 
 const getBestScoresData = require("../getBestScoresData");
 const Chart = require('lchart');
-
 module.exports = {
     enabled: true,
     adminCommand: false,
@@ -11,7 +9,6 @@ module.exports = {
     command: ['chartc'],
     argsInfo: '[玩家名], [对应数据]',
     argList: ["aim", "spd", "acc", "pp"],
-
     call: async (host, apiKey, saveDir, downloader, args) => {
         try {
             const user = args[0];

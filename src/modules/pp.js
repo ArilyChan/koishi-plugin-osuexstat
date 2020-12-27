@@ -1,7 +1,5 @@
-"use strict";
 
 const getBestScoresData = require("../getBestScoresData");
-
 module.exports = {
     enabled: true,
     adminCommand: false,
@@ -9,7 +7,6 @@ module.exports = {
     info: 'totalpp查询',
     command: ['pp'],
     argsInfo: '[玩家名]',
-
     call: async (host, apiKey, saveDir, downloader, args) => {
         try {
             const user = args[0];

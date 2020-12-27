@@ -1,21 +1,18 @@
-"use strict";
-
-const querystring = require('querystring');
-const fetch = require('node-fetch');
-
+const querystring = require("querystring");
+const fetch = require("node-fetch");
 class OsuApi {
     static async apiCall(_path, _data, _host, times = 0) {
         const MAX_RETRY = 10;
         try {
             const contents = querystring.stringify(_data);
-            const url = "https://" + _host + "/api" + _path + '?' + contents;
+            const url = "https://" + _host + "/api" + _path + "?" + contents;
             // console.log(url);
-            const data = await fetch(url, { 
-                method: 'GET',
-                headers: { 'Content-Type': 'application/octet-stream' },
-                credentials: 'include',
+            const data = await fetch(url, {
+                method: "GET",
+                headers: { "Content-Type": "application/octet-stream" },
+                credentials: "include",
                 timeout: 10000,
-            }).then(res => res.json());
+            }).then((res) => res.json());
             if (!data) return { code: "error" };
             const dataString = JSON.stringify(data);
             if (dataString === "[]" || dataString === "{}") return { code: 404 };
@@ -31,14 +28,13 @@ class OsuApi {
         }
     }
     static async getUserStdBp(user, host, apiKey) {
-        let options = {};
+        const options = {};
         options.u = user;
         options.k = apiKey;
         options.m = "0";
         options.limit = "100";
-        const resp = await this.apiCall('/get_user_best', options, host);
+        const resp = await this.apiCall("/get_user_best", options, host);
         return resp;
     }
 }
-
 module.exports = OsuApi;

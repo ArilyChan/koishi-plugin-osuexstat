@@ -1,9 +1,7 @@
-"use strict";
-
-const MapCalculater = require("./MapCalculater");
+/* eslint-disable radix */
+const MapCalculator = require("./MapCalculator");
 const path = require("path");
 const utils = require("./utils");
-
 class ScoreObject {
     constructor(score, saveDir) {
         this.beatmap_id = score.beatmap_id;
@@ -26,53 +24,50 @@ class ScoreObject {
         // this.replay_available = score.replay_available;
         this.acc = this.calACC();
     }
-
     calACC() {
         const total = this.count50 + this.count100 + this.count300 + this.countmiss;
         return total === 0 ? 0 : ((this.count50 * 50 + this.count100 * 100 + this.count300 * 300) / (total * 300) * 100);
     }
-
     async extendScore() {
         // 获取谱面信息
-        let mapCalculater = await new MapCalculater(this.beatmapFile, { mods: this.mods, combo: this.maxcombo, nmiss: this.countmiss, acc: this.acc }).init();
-        const map = mapCalculater.map;
-        if (map.artist_unicode == "") map.artist_unicode = map.artist;
-        if (map.title_unicode == "") map.title_unicode = map.title;
+        const mapCalculator = await new MapCalculator(this.beatmapFile, { mods: this.mods, combo: this.maxcombo, nmiss: this.countmiss, acc: this.acc }).init();
+        const map = mapCalculator.map;
+        if (map.artist_unicode === "") map.artist_unicode = map.artist;
+        if (map.title_unicode === "") map.title_unicode = map.title;
         this.beatmapTitle = this.beatmap_id + " " + map.artist_unicode + " - " + map.title_unicode + " (" + map.creator + ") [" + map.version + "]";
         const ar = map.ar;
         const od = map.od;
         const hp = map.hp;
         const cs = map.cs;
-        const resultStat = mapCalculater.calculateStatWithMods({ ar, od, hp, cs }, this.mods);
-        this.fullCombo = mapCalculater.maxcombo;
+        const resultStat = mapCalculator.calculateStatWithMods({ ar, od, hp, cs }, this.mods);
+        this.fullCombo = mapCalculator.maxcombo;
         this.cs = resultStat.cs;
         this.ar = resultStat.ar;
         this.od = resultStat.od;
         this.hp = resultStat.hp;
         // 只是近似的长度
-        this.applength = Math.floor(mapCalculater.rawApproximateLength / resultStat.speed_mul);
-        this.stars = mapCalculater.stars.total;
-        let pp = {};
-        pp.total = mapCalculater.pp.total;
-        pp.aim = mapCalculater.pp.aim;
-        pp.acc = mapCalculater.pp.acc;
-        pp.speed = mapCalculater.pp.speed;
+        this.applength = Math.floor(mapCalculator.rawApproximateLength / resultStat.speed_mul);
+        this.stars = mapCalculator.stars.total;
+        const pp = {};
+        pp.total = mapCalculator.pp.total;
+        pp.aim = mapCalculator.pp.aim;
+        pp.acc = mapCalculator.pp.acc;
+        pp.speed = mapCalculator.pp.speed;
         this.pp = pp;
-        let fcpp = {};
-        fcpp.total = mapCalculater.fcpp.total;
-        fcpp.aim = mapCalculater.fcpp.aim;
-        fcpp.acc = mapCalculater.fcpp.acc;
-        fcpp.speed = mapCalculater.fcpp.speed;
+        const fcpp = {};
+        fcpp.total = mapCalculator.fcpp.total;
+        fcpp.aim = mapCalculator.fcpp.aim;
+        fcpp.acc = mapCalculator.fcpp.acc;
+        fcpp.speed = mapCalculator.fcpp.speed;
         this.fcpp = fcpp;
-        let sspp = {};
-        sspp.total = mapCalculater.sspp.total;
-        sspp.aim = mapCalculater.sspp.aim;
-        sspp.acc = mapCalculater.sspp.acc;
-        sspp.speed = mapCalculater.sspp.speed;
+        const sspp = {};
+        sspp.total = mapCalculator.sspp.total;
+        sspp.aim = mapCalculator.sspp.aim;
+        sspp.acc = mapCalculator.sspp.acc;
+        sspp.speed = mapCalculator.sspp.speed;
         this.sspp = sspp;
         return this;
     }
-
     toString() {
         const beatmapParams = "CS" + this.cs.toFixed(1) + "  AR" + this.ar.toFixed(1) + "  OD" + this.od.toFixed(1) + "  HP" + this.hp.toFixed(1);
         const beatmapString = this.beatmapTitle + "\n" + beatmapParams + "  ★" + this.stars.toFixed(2) + "\n";
@@ -85,9 +80,7 @@ class ScoreObject {
         const fcppString = "If FC: " + this.fcpp.total.toFixed(2) + "pp (aim: " + this.fcpp.aim.toFixed(0) + "  spd: " + this.fcpp.speed.toFixed(0) + "  acc: " + this.fcpp.acc.toFixed(0) + ")";
         const ssppString = "If SS: " + this.sspp.total.toFixed(2) + "pp (aim: " + this.sspp.aim.toFixed(0) + "  spd: " + this.sspp.speed.toFixed(0) + "  acc: " + this.sspp.acc.toFixed(0) + ")";
         const ppAll = ppString + "\n" + fcppString + "\n" + ssppString + "\n";
-
         return beatmapString + accString + comboString + modsString + rankString + scoreString + ppAll;
     }
 }
-
 module.exports = ScoreObject;

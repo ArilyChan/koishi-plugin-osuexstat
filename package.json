@@ -12,6 +12,7 @@
     "fs": "0.0.1-security",
     "glob": "^7.1.6",
     "lchart": "^0.1.0",
+    "microjob": "^0.7.0",
     "node-fetch": "^2.6.1",
     "ojsama": "^1.2.5",
     "path": "^0.12.7",

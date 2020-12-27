@@ -1,8 +1,6 @@
-"use strict";
 
 const getBestScoresData = require("../getBestScoresData");
 const Chart = require('lchart');
-
 module.exports = {
     enabled: true,
     adminCommand: false,
@@ -10,7 +8,6 @@ module.exports = {
     info: 'bp时间分布',
     command: ['date'],
     argsInfo: '[玩家名], [时区，不写默认+8]',
-
     call: async (host, apiKey, saveDir, downloader, args) => {
         try {
             const user = args[0];

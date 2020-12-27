@@ -1,8 +1,6 @@
-"use strict";
 
 const getBestScoresData = require("../getBestScoresData");
 const Chart = require('lchart');
-
 module.exports = {
     enabled: true,
     adminCommand: false,
@@ -11,7 +9,6 @@ module.exports = {
     command: ['chart'],
     argsInfo: '[玩家名，多玩家以/分隔], [对应数据]',
     argList: ["cs", "ar", "od", "hp", "stars", "length", "aim", "spd", "acc", "pp"],
-
     getDrawData: (exScoreObjects, type) => {
         const statTypes = ["cs", "ar", "od", "hp", "stars", "applength"]; // 对象属性
         const statKeywords = ["cs", "ar", "od", "hp", "stars", "length"]; // 输入的字符
@@ -43,7 +40,6 @@ module.exports = {
         });
         return points;
     },
-
     call: async (host, apiKey, saveDir, downloader, args) => {
         try {
             const MAX_PLAYER_COUNT = 2;

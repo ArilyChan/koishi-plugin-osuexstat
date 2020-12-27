@@ -1,13 +1,10 @@
-"use strict";
 
 var glob = require('glob'),
     path = require('path');
-
 class CommandsInfo {
     constructor() {
         this.commands = this.loadModules();
     }
-
     // 加载modules内的enabled指令
     loadModules() {
         let commands = [];
@@ -29,10 +26,8 @@ class CommandsInfo {
         });
         return commands;
     }
-
     getHelp() {
         let output = "";
-
         // 输出全部指令
         output = output + "exbp指令查询\n";
         for (let com of this.commands) {
@@ -40,10 +35,7 @@ class CommandsInfo {
         }
         // output = output + "基本指令有：" + commands.reduce((acc, cur) => { return acc + cur.command[0] + "/" }, "");
         return output;
-
     }
-
 }
-
 
 module.exports = CommandsInfo;

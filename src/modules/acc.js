@@ -1,20 +1,18 @@
-"use strict";
+/* eslint-disable no-throw-literal */
 
-const getBestScoresData = require("../getBestScoresData");
-
+const GetBestScoresData = require("../getBestScoresData");
 module.exports = {
     enabled: true,
     adminCommand: false,
-    type: 'acc',
-    info: 'acc查询',
-    command: ['acc'],
-    argsInfo: '[玩家名]',
-
+    type: "acc",
+    info: "acc查询",
+    command: ["acc"],
+    argsInfo: "[玩家名]",
     call: async (host, apiKey, saveDir, downloader, args) => {
         try {
             const user = args[0];
             if (!user) throw "格式不正确\n请输入exbp " + module.exports.command[0] + ", " + module.exports.argsInfo;
-            let exScoreObjects = await new getBestScoresData(host, apiKey, user, saveDir).getBestScoresObject(downloader);
+            const exScoreObjects = await new GetBestScoresData(host, apiKey, user, saveDir).getBestScoresObject(downloader);
             // 统计出acc区间，最大最小值并绘图
             // 计算每张图acc-fc acc、acc-ss acc，列出提升空间最大的图
             const length = exScoreObjects.length;
@@ -27,11 +25,11 @@ module.exports = {
             let maxFCImpAccBeatmapTitle = "";
             let maxSSImpAccBeatmapTitle = "";
             for (let i = 0; i < length; i++) {
-                let acc = exScoreObjects[i].pp.acc;
-                let accFC = exScoreObjects[i].fcpp.acc;
-                let accSS = exScoreObjects[i].sspp.acc;
-                let accVSFC = accFC - acc;
-                let accVSSS = accSS - acc;
+                const acc = exScoreObjects[i].pp.acc;
+                const accFC = exScoreObjects[i].fcpp.acc;
+                const accSS = exScoreObjects[i].sspp.acc;
+                const accVSFC = accFC - acc;
+                const accVSSS = accSS - acc;
                 if (acc > maxAcc) {
                     maxAcc = acc;
                     maxAccBeatmapTitle = exScoreObjects[i].beatmapTitle;

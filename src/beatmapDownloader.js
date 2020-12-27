@@ -1,24 +1,23 @@
+/* eslint-disable no-throw-literal */
 const fetch = require("node-fetch");
 const fs = require("fs");
 const path = require("path");
-
 class beatmapDownloader {
     constructor(saveDir) {
         this.saveDir = saveDir;
     }
-
     async downloadMap(bid, times = 0) {
         const filePath = path.join(this.saveDir, `./${bid}.osu`);
         const MAX_RETRY = 20;
         try {
-            let beatmapData = await fetch(`https://osu.ppy.sh/osu/${bid}`, {
-                method: 'GET',
-                headers: { 'Content-Type': 'application/octet-stream' },
-                credentials: 'include',
+            const beatmapData = await fetch(`https://osu.ppy.sh/osu/${bid}`, {
+                method: "GET",
+                headers: { "Content-Type": "application/octet-stream" },
+                credentials: "include",
                 timeout: 10000,
-            }).then(res => res.text());
+            }).then((res) => res.text());
             console.log("保存为文件" + bid + ".osu");
-            fs.writeFile(filePath, beatmapData, "utf-8", function (err) {
+            fs.writeFile(filePath, beatmapData, "utf-8", (err) => {
                 if (err) throw (err);
             });
             return true;
@@ -29,12 +28,11 @@ class beatmapDownloader {
             return this.downloadMap(bid, times + 1);
         }
     }
-
     async downloadQueue(beatmaps) {
         try {
             for (let i = 0; i < beatmaps.length; i++) {
-                console.log("[" + (i + 1) + "/" + beatmaps.length + "]开始下载" + beatmaps[i])
-                let result = await this.downloadMap(beatmaps[i]);
+                console.log("[" + (i + 1) + "/" + beatmaps.length + "]开始下载" + beatmaps[i]);
+                const result = await this.downloadMap(beatmaps[i]);
                 if (result) continue;
                 else break;
             }
@@ -47,5 +45,4 @@ class beatmapDownloader {
         }
     }
 }
-
 module.exports = beatmapDownloader;
