@@ -1,6 +1,6 @@
 const osuexstat = require("./index").osuexstat;
 const exs = new osuexstat({
-    apiKey: '27caa4993a4430b2e63762bdd5e6b9643ddf7679',
+    apiKey: require("./apiToken.json").apiToken,
 });
 
 const myQQ = 1;
