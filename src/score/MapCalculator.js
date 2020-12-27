@@ -1,9 +1,11 @@
+/* eslint-disable no-shadow */
 /* eslint-disable class-methods-use-this */
 /* eslint-disable new-cap */
 // const ojsama = require("ojsama");
 
-const { spawn, Thread, Worker } = require("threads");
+const { spawn, Worker } = require("threads");
 // const utils = require("./utils");
+const worker = spawn(new Worker("../workers/calculator-worker.js"));
 class MapCalculator {
     /**
      * @param {String} beatmapFile
@@ -35,17 +37,16 @@ class MapCalculator {
     // }
     calculateStatWithMods(values, mods) {
         // return new ojsama.std_beatmap_stats(values).with_mods(mods);
-        return this.worker.calculateStatWithMods({ values, mods });
+        return worker.then((worker) => worker.calculateStatWithMods({ values, mods }));
     }
     async init() {
-        this.worker = await spawn(new Worker("../workers/calculator-worker"));
-        const result = await this.worker.init(this.toJSON());
+        const result = await worker.then((worker) => worker.init(this.toJSON()));
         // return this;
         return Object.assign(this, result);
     }
 
     terminateWorker() {
-        return Thread.terminate(this.worker);
+        // return Thread.terminate(this.worker);
     }
 
     toJSON() {

@@ -23,6 +23,7 @@ class CommandsInfo {
                     console.log("[osuexstat]警告：检测到重复指令，位于" + module.type);
                 }
             } catch (e) {
+                console.log(e)
                 console.log("[osuexstat]unable to load module due to require error", path.resolve(file));
             }
         });
