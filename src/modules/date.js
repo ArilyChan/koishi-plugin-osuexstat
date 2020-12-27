@@ -1,31 +1,31 @@
 
-const getBestScoresData = require("../getBestScoresData");
-const Chart = require('lchart');
+const GetBestScoresData = require("../getBestScoresData");
+const Chart = require("lchart");
 module.exports = {
     enabled: true,
     adminCommand: false,
-    type: 'date',
-    info: 'bp时间分布',
-    command: ['date'],
-    argsInfo: '[玩家名], [时区，不写默认+8]',
+    type: "date",
+    info: "bp时间分布",
+    command: ["date"],
+    argsInfo: "[玩家名], [时区，不写默认+8]",
     call: async (host, apiKey, saveDir, downloader, args) => {
         try {
             const user = args[0];
             const timezoneOffsetHours = parseInt(args[1]) || 8;
-            if (!timezoneOffsetHours) return "请输入正确的时区，默认为+8"
+            if (!timezoneOffsetHours) return "请输入正确的时区，默认为+8";
             if (!user) throw "格式不正确\n请输入exbp " + module.exports.command[0] + ", " + module.exports.argsInfo;
-            let exScoreObjects = await new getBestScoresData(host, apiKey, user, saveDir).getBestScoresObject(downloader);
+            const exScoreObjects = await new GetBestScoresData(host, apiKey, user, saveDir).getBestScoresObject(downloader);
             const length = exScoreObjects.length;
             let data = [];
             for (let i = 0; i < length; i++) {
-                let time = exScoreObjects[i].time;
+                const time = exScoreObjects[i].time;
                 let localHours = (time.getUTCHours() + timezoneOffsetHours) % 24;
                 if (localHours < 0) localHours += 24;
-                let SecondsInDay = localHours * 3600 + time.getUTCMinutes() * 60 + time.getUTCSeconds();
+                const SecondsInDay = localHours * 3600 + time.getUTCMinutes() * 60 + time.getUTCSeconds();
                 data.push({ pp: exScoreObjects[i].pp.total, time: SecondsInDay });
             }
             data = data.sort((a, b) => a.time - b.time);
-            let points = data.map((d) => {
+            const points = data.map((d) => {
                 return { x: d.time / 3600, y: d.pp };
             });
             const chart = new Chart([{

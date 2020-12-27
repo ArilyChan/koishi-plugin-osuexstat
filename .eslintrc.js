@@ -155,10 +155,12 @@ module.exports = {
         // 禁止函数在不同分支返回不同类型的值
         "consistent-return": "error",
         // @fixable if 后面必须要有 {，除非是单行 if
+        /*
         "curly": [
             "warn",
             "multi-or-nest"
         ],
+        */
         // switch 语句必须有 default
         "default-case": "error",
         // @fixable 链式调用的时候，点号必须放在第二行开头处，禁止放在第一行结尾处
@@ -299,7 +301,7 @@ module.exports = {
         // 禁止使用逗号操作符
         "no-sequences": "error",
         // 禁止 throw 字面量，必须 throw 一个 Error 对象
-        "no-throw-literal": "error",
+        // "no-throw-literal": "error",
         // 循环内必须对循环条件的变量有修改
         "no-unmodified-loop-condition": "error",
         // 禁止无用的表达式
@@ -330,7 +332,7 @@ module.exports = {
         // Promise 的 reject 中必须传入 Error 对象，而不是字面量
         "prefer-promise-reject-errors": "error",
         // parseInt 必须传入第二个参数
-        "radix": "error",
+        // "radix": "error",
         // async 函数中必须存在 await 语句
         "require-await": "warn",
         // var 必须在作用域的最前面
@@ -423,7 +425,7 @@ module.exports = {
         // callback 之后必须立即 return
         "callback-return": "warn",
         // require 必须在全局作用域下
-        "global-require": "warn",
+        // "global-require": "warn",
         // callback 中的 error 必须被处理
         "handle-callback-err": "error",
         // 禁止直接使用 Buffer

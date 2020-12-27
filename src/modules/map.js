@@ -1,17 +1,17 @@
 
-const getBestScoresData = require("../getBestScoresData");
+const GetBestScoresData = require("../getBestScoresData");
 module.exports = {
     enabled: true,
     adminCommand: false,
-    type: 'map',
-    info: '四维查询',
-    command: ['map'],
-    argsInfo: '[玩家名]',
+    type: "map",
+    info: "四维查询",
+    command: ["map"],
+    argsInfo: "[玩家名]",
     call: async (host, apiKey, saveDir, downloader, args) => {
         try {
             const user = args[0];
             if (!user) throw "格式不正确\n请输入exbp " + module.exports.command[0] + ", " + module.exports.argsInfo;
-            let exScoreObjects = await new getBestScoresData(host, apiKey, user, saveDir).getBestScoresObject(downloader);
+            const exScoreObjects = await new GetBestScoresData(host, apiKey, user, saveDir).getBestScoresObject(downloader);
             // 分别统计四维和谱面难度，计算各自平均数
             const length = exScoreObjects.length;
             let maxCS = -Infinity;
@@ -33,12 +33,12 @@ module.exports = {
             let minLength = Infinity;
             let totalLength = 0;
             for (let i = 0; i < length; i++) {
-                let cs = exScoreObjects[i].cs;
-                let ar = exScoreObjects[i].ar;
-                let od = exScoreObjects[i].od;
-                let hp = exScoreObjects[i].hp;
-                let stars = exScoreObjects[i].stars;
-                let applength = exScoreObjects[i].applength;
+                const cs = exScoreObjects[i].cs;
+                const ar = exScoreObjects[i].ar;
+                const od = exScoreObjects[i].od;
+                const hp = exScoreObjects[i].hp;
+                const stars = exScoreObjects[i].stars;
+                const applength = exScoreObjects[i].applength;
                 if (cs > maxCS) maxCS = cs;
                 if (cs < minCS) minCS = cs;
                 totalCS += cs;

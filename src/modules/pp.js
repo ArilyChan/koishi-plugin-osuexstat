@@ -1,17 +1,17 @@
 
-const getBestScoresData = require("../getBestScoresData");
+const GetBestScoresData = require("../getBestScoresData");
 module.exports = {
     enabled: true,
     adminCommand: false,
-    type: 'pp',
-    info: 'totalpp查询',
-    command: ['pp'],
-    argsInfo: '[玩家名]',
+    type: "pp",
+    info: "totalpp查询",
+    command: ["pp"],
+    argsInfo: "[玩家名]",
     call: async (host, apiKey, saveDir, downloader, args) => {
         try {
             const user = args[0];
             if (!user) throw "格式不正确\n请输入exbp " + module.exports.command[0] + ", " + module.exports.argsInfo;
-            let exScoreObjects = await new getBestScoresData(host, apiKey, user, saveDir).getBestScoresObject(downloader);
+            const exScoreObjects = await new GetBestScoresData(host, apiKey, user, saveDir).getBestScoresObject(downloader);
             // 统计出pp区间，最大最小值并绘图
             // 计算每张图pp-fc pp、pp-ss pp，列出提升空间最大的图
             const length = exScoreObjects.length;
@@ -23,11 +23,11 @@ module.exports = {
             let maxFCImpPPBeatmapTitle = "";
             let maxSSImpPPBeatmapTitle = "";
             for (let i = 0; i < length; i++) {
-                let pp = exScoreObjects[i].pp.total;
-                let ppFC = exScoreObjects[i].fcpp.total;
-                let ppSS = exScoreObjects[i].sspp.total;
-                let ppVSFC = ppFC - pp;
-                let ppVSSS = ppSS - pp;
+                const pp = exScoreObjects[i].pp.total;
+                const ppFC = exScoreObjects[i].fcpp.total;
+                const ppSS = exScoreObjects[i].sspp.total;
+                const ppVSFC = ppFC - pp;
+                const ppVSSS = ppSS - pp;
                 if (pp > maxPP) maxPP = pp;
                 if (pp < minPP) minPP = pp;
                 totalPP += pp;
