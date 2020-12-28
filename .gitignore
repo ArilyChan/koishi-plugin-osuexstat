@@ -274,3 +274,4 @@ ASALocalRun/
 healthchecksdb
 # this
 apiToken.json
+test.js
