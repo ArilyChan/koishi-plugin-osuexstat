@@ -1,9 +1,9 @@
 /* eslint-disable array-callback-return */
 /* eslint-disable no-sync */
 /* eslint-disable no-throw-literal */
+const fs = require("fs");
 const ScoreObject = require("./score/ScoreObject");
 const OsuApi = require("./ApiRequest");
-const fs = require("fs");
 class getBestScoresData {
     constructor(host, apiKey, user, saveDir) {
         this.host = host;

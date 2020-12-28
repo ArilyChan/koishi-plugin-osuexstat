@@ -15,6 +15,7 @@
     "microjob": "^0.7.0",
     "node-fetch": "^2.6.1",
     "ojsama": "^1.2.5",
+    "p-queue": "^6.6.2",
     "path": "^0.12.7",
     "querystring": "^0.2.0",
     "threads": "^1.6.3"

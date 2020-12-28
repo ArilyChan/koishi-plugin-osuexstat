@@ -1,7 +1,9 @@
 /* eslint-disable no-throw-literal */
-const fetch = require("node-fetch");
-const fs = require("fs");
+const fs = require("fs").promises;
 const path = require("path");
+const fetch = require("node-fetch");
+const { default: PQueue } = require("p-queue");
+
 class beatmapDownloader {
     constructor(saveDir) {
         this.saveDir = saveDir;
@@ -17,7 +19,7 @@ class beatmapDownloader {
                 timeout: 10000,
             }).then((res) => res.text());
             console.log("保存为文件" + bid + ".osu");
-            fs.writeFile(filePath, beatmapData, "utf-8", (err) => {
+            await fs.writeFile(filePath, beatmapData, "utf-8", (err) => {
                 if (err) throw (err);
             });
             return true;
@@ -30,12 +32,19 @@ class beatmapDownloader {
     }
     async downloadQueue(beatmaps) {
         try {
-            for (let i = 0; i < beatmaps.length; i++) {
-                console.log("[" + (i + 1) + "/" + beatmaps.length + "]开始下载" + beatmaps[i]);
-                const result = await this.downloadMap(beatmaps[i]);
-                if (result) continue;
-                else break;
-            }
+            const queue = new PQueue({ concurrency: 1 });
+            queue.addAll(beatmaps.map((bid, index) => () => {
+                console.log("[" + (index + 1) + "/" + beatmaps.length + "]开始下载" + bid);
+                return this.downloadMap(bid);
+            }));
+            // for (let i = 0; i < beatmaps.length; i++) {
+            //     console.log("[" + (i + 1) + "/" + beatmaps.length + "]开始下载" + beatmaps[i]);
+            //     const result = await this.downloadMap(beatmaps[i]);
+            //     if (result) continue;
+            //     else break;
+            // }
+            // console.log("下载队列完成！");
+            await queue.onIdle();
             console.log("下载队列完成！");
             return true;
         }
